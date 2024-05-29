@@ -1,6 +1,7 @@
 import axios from 'axios'
 
-const URL = 'http://localhost:8080/offer'
+const URL = 'http://localhost:8080'
+const NON_AUTH_ENDPOINT = '/auth/offer'
 
 const token = (localStorage.hasOwnProperty("token")) ? localStorage.getItem("token") : ""
 
@@ -18,7 +19,7 @@ const axiosHeader = axios.create({
 })
 
 export const useGetOffers = async() => {
-    const res = await axiosHeader.get(URL)
+    const res = await axiosHeader.get(URL + NON_AUTH_ENDPOINT)
 
     if(res.status != 200)
     {
@@ -29,7 +30,7 @@ export const useGetOffers = async() => {
 }
 
 export const useGetUsersOffers = async(userId: number) => {
-    const res = await axiosHeader.get(`${URL}/seller/${userId}`)
+    const res = await axiosHeader.get(`${URL}${NON_AUTH_ENDPOINT}/seller/${userId}`)
 
     if(res.status != 200)
     {

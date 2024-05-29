@@ -1,5 +1,6 @@
-import React, { useState } from 'react'
+import React, { useReducer, useState } from 'react'
 import { Container, TextField, Typography, Button } from '@mui/material'
+import { useRegister } from '../hooks/UserHooks'
 
 const Register = () => {
 
@@ -15,7 +16,25 @@ const Register = () => {
 
 
 
-  const onSubmit = () => {}
+  const onSubmit = async(e: any) => {
+    e.preventDefault()
+
+
+    if(pass === passConfirm) {
+
+      const data = await useRegister({
+        fname: fname,
+        lname: lname,
+        email: email,
+        password: pass,
+        address: addr,
+        city: city,
+        code: code
+      });
+
+      localStorage.setItem("token", data.token)
+    }
+  }
 
   return (
     <Container sx={{display:"flex", justifyContent: "center", marginTop: 10, marginBottom: 10}}>

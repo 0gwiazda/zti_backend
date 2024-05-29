@@ -17,7 +17,6 @@ const Home = () => {
     loadOffers()
   }, [])
 
-
   return (
     <>
       <Navbar/>

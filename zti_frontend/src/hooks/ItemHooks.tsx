@@ -1,6 +1,7 @@
 import axios from 'axios'
 
-const URL = 'http://localhost:8080/item'
+const URL = 'http://localhost:8080'
+const NON_AUTH_ENDPOINT = '/auth/item'
 
 const token = (localStorage.hasOwnProperty("token")) ? localStorage.getItem("token") : ""
 
@@ -18,7 +19,7 @@ const axiosHeader = axios.create({
 })
 
 export const useGetItem = async(id:number) => {
-    const res = await axiosHeader.get(`${URL}/${id}`)
+    const res = await axiosHeader.get(`${URL}${NON_AUTH_ENDPOINT}/${id}`)
 
     if(res.status != 200)
     {

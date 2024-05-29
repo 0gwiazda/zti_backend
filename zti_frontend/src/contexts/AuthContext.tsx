@@ -1,3 +1,4 @@
+import { jwtDecode } from 'jwt-decode';
 import {type ReactNode ,createContext, useContext, useEffect, useState } from 'react'
 
 interface IAuthContextType 
@@ -21,7 +22,7 @@ export const AuthProvider = ({children} : {children: ReactNode}) => {
     const [isLogged, setIsLogged] = useState(false)
     
     useEffect(() => {
-        if(localStorage.hasOwnProperty("token") && localStorage.hasOwnProperty("user"))
+        if(localStorage.hasOwnProperty("token"))
         {
             setIsLogged(true)
         }

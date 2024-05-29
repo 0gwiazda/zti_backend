@@ -1,18 +1,34 @@
 import { Container, TextField, Typography, Button } from '@mui/material'
 import { useState } from 'react'
 import Navbar from '../components/Navbar'
+import { useLogin } from '../hooks/UserHooks'
+import { Navigate, useNavigate } from 'react-router-dom'
+import { useAuth } from '../contexts/AuthContext'
+import { jwtDecode } from 'jwt-decode'
 
 const Login = () => {
 
   const [email, setEmail] = useState("")
   const [error, setError] = useState(false)
   const [pass, setPass] = useState("")
+  const {setIsLogged} = useAuth()
+  const nav = useNavigate()
 
-  const onSubmit = (e:any) => 
+  const onSubmit = async(e:any) => 
   {
     e.preventDefault()
 
+    const token = await useLogin({email: email, password: pass})
+
+    localStorage.setItem("token", token.token)
+
+    const decode = jwtDecode(token ? token.token : "")
     
+    localStorage.setItem("username", decode["sub"] ? decode["sub"] : "")
+
+    setIsLogged(true);
+    
+    nav("/")
   }
 
   return (
