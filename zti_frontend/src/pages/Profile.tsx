@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
-import { useGetCurrentUser, useGetUser, usePutUser, useDeleteUser, useLogout } from "../hooks/UserHooks"
+import { useGetCurrentUser, useGetUser, usePutUser, useDeleteUser } from "../hooks/UserHooks"
 import { Box, Button, Container, TextField, Typography } from "@mui/material"
 import { useGetUsersOffers } from "../hooks/OfferHooks"
 import Offer from "./Offers/Offer"
@@ -8,6 +8,7 @@ import Navbar from "../components/Navbar"
 import { useGetUserComments, usePostComment } from "../hooks/CommentHooks"
 import Comment from "./Comments/Comment"
 import { useAuth } from "../contexts/AuthContext"
+import { useDeleteRecommend, useGetDislikes, useGetLikes, useGetRecommend, usePostRecommend, usePutRecommend } from "../hooks/RecommendHooks"
 
 interface IUser
 {
@@ -18,6 +19,14 @@ interface IUser
   address: string,
   city: string,
   code: string,
+}
+
+interface IRecommend
+{
+  id: number,
+  userid: number,
+  sellerid: number,
+  liked: boolean
 }
 
 
@@ -37,6 +46,12 @@ const Profile = () => {
   const [address, setAddress] = useState("")
   const [city, setCity] = useState("")
   const [code, setCode] = useState("")
+
+  //recommends
+  const [showRecommend, setShowRecommend] = useState(false)
+  const [likes, setLikes] = useState(0)
+  const [dislikes, setDislikes] = useState(0)
+  const [recommend, setRecommend] = useState<IRecommend>({} as IRecommend)
 
   const nav = useNavigate()
 
@@ -62,7 +77,7 @@ const Profile = () => {
     if(id){
       const data = await useGetUsersOffers(parseInt(id))
       setOffers(data)
-      console.log("up")
+      
     } 
     else
     {
@@ -76,14 +91,54 @@ const Profile = () => {
     {
       const data = await useGetUserComments(parseInt(id))
       setComments(data)
-      console.log("up")
+      
     }
     else
     {
       const data = await useGetUserComments(user ? user.id : 0)
       setComments(data)
-    }   
-}
+    }
+  }
+
+  const loadUserRecommends = async() => {
+    if(id)
+    {
+      const parsed = parseInt(id)
+      
+      const Ldata = await useGetLikes(parsed)
+      setLikes(Ldata)
+
+      const Ddata = await useGetDislikes(parsed)
+      setDislikes(Ddata)
+    }
+    else
+    {
+      const Ldata = await useGetLikes(user ? user.id : 0)
+      setLikes(Ldata)
+
+      const Ddata = await useGetDislikes(user ? user.id : 0)
+      setDislikes(Ddata)
+    }
+  }
+
+  const loadRecommend = async() =>{
+    if(user.email !== localStorage.getItem('username') && isLogged)
+    {
+      const curr = await useGetCurrentUser()
+      
+      let data;
+
+      try
+      {
+        data = await useGetRecommend(curr.id, user.id)
+      }
+      catch(err){
+        data = {}
+      }
+
+      setRecommend(data ? data : {})
+    }
+  }
 
   useEffect(() => {
     loadUser()
@@ -96,6 +151,14 @@ const Profile = () => {
   useEffect(()=>{
     loadUserComments()
   }, [user])
+
+  useEffect(() => {
+    loadUserRecommends()
+  }, [user])
+
+  useEffect(() => {
+    loadRecommend()
+  }, [likes, dislikes])
 
   const onSubmit = async(e: any) => {
     e.preventDefault()
@@ -196,11 +259,13 @@ const Profile = () => {
               </Button>
             </Box>
           </form>)}
+          {isLogged && user.email === localStorage.getItem('username') &&
           <Button
             onClick={() => setShowEdit(!showEdit)}
           >
             {!showEdit ? "Show" : "Close"} Edit
           </Button>
+          }
           <Typography>
             Offers:
           </Typography>
@@ -215,6 +280,71 @@ const Profile = () => {
           >
             Add Offer
           </Button>}
+          {likes != 0 && dislikes != 0 && <>
+          <Typography>
+            {!showRecommend ? "Recommended by: " + ((likes / (likes + dislikes)) * 100.).toFixed(0) + "%" : "Likes: " + likes + " Dislikes: " + dislikes}
+          </Typography>
+          <Box>
+            <Button
+              onClick={() => setShowRecommend(!showRecommend)}
+            >
+              {!showRecommend ? "Show" : "Close"} Recommendations
+            </Button>
+            {isLogged && user.email !== localStorage.getItem('username') ? (<>
+            <Button
+              onClick={async() => {
+                
+
+                if(Object.keys(recommend).length != 0)
+                {
+                  if(recommend.liked)
+                  {
+                    await useDeleteRecommend(recommend.id)
+                  }
+                  else
+                  {
+                    await usePutRecommend(recommend.id, {userid: recommend.userid, sellerid: recommend.sellerid, liked: true})
+                  }
+                }
+                else
+                {
+                  const logged = await useGetCurrentUser()
+
+                  await usePostRecommend({userid: logged.id, sellerid: user.id, liked: true})
+                }
+
+                await loadUserRecommends()
+              }}
+            >
+              Like
+            </Button>
+            <Button
+              onClick={async() => {
+                if(Object.keys(recommend).length != 0)
+                {
+                  if(!recommend.liked)
+                  {
+                    await useDeleteRecommend(recommend.id)
+                  }
+                  else
+                  {
+                    await usePutRecommend(recommend.id, {userid: recommend.userid, sellerid: recommend.sellerid, liked: false})
+                  }
+                }
+                else
+                {
+                  const logged = await useGetCurrentUser()
+
+                  await usePostRecommend({userid: logged.id, sellerid: user.id, liked: false})
+                }
+
+                await loadUserRecommends()
+              }}
+            >
+              Dislike
+            </Button></>) : (<></>)}
+          </Box>
+          </>}
           <Typography>
             Comments: 
           </Typography>
