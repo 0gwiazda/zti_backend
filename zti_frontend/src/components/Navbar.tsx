@@ -1,4 +1,4 @@
-import { AppBar, Button, Stack, Toolbar, Typography } from '@mui/material'
+import { AppBar, Stack, Toolbar, Typography } from '@mui/material'
 import { NavLink } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { useEffect } from 'react'

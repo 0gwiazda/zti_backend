@@ -2,7 +2,7 @@ import { Container, TextField, Typography, Button } from '@mui/material'
 import { useState } from 'react'
 import Navbar from '../components/Navbar'
 import { useLogin } from '../hooks/UserHooks'
-import { Navigate, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { jwtDecode } from 'jwt-decode'
 
@@ -75,7 +75,7 @@ const Login = () => {
                   type='submit' 
                   variant='outlined' 
                   sx={{color: "#fff", marginTop: '10%', marginLeft: '25%'}}
-                >Zaloguj</Button>
+                >Log in</Button>
               </Container>
             </form>
 

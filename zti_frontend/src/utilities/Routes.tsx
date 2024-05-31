@@ -3,6 +3,7 @@ import Home from '../pages/Home'
 import Login from '../pages/Login'
 import Register from '../pages/Register'
 import Profile from '../pages/Profile'
+import OfferForm from '../pages/Offers/OfferForm'
 
 export const RouterPaths = createBrowserRouter([
     {
@@ -18,11 +19,11 @@ export const RouterPaths = createBrowserRouter([
         element: <Register/>
     },
     {
-        path: "/profile/:id",
+        path: "/profile/:id?",
         element: <Profile/>
     },
     {
-        path: "/profile",
-        element: <Profile/>
+        path:"/add-offer",
+        element: <OfferForm/>
     }
 ])

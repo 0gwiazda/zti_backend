@@ -11,6 +11,7 @@ interface OfferProps{
   startdate: string
   enddate: string
   sellerid: number
+  email: string
 }
 
 const Offer:React.FC<OfferProps> = ({
@@ -20,6 +21,7 @@ const Offer:React.FC<OfferProps> = ({
   auction,
   itemid,
   sellerid,
+  email
 }) => {
   
   interface ItemProps {
@@ -66,7 +68,7 @@ const Offer:React.FC<OfferProps> = ({
       >
         {item.price / 100.0}$
       </Typography>
-      {!id &&
+      {!id && email !== localStorage.getItem('username') &&
         <Link to={`/profile/${sellerid}`}>
           Seller Profile
         </Link>

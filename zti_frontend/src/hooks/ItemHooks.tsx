@@ -1,25 +1,25 @@
-import axios from 'axios'
+import {getTokenHeader} from './UtilityHooks'
 
 const URL = 'http://localhost:8080'
 const NON_AUTH_ENDPOINT = '/auth/item'
 
-const token = (localStorage.hasOwnProperty("token")) ? localStorage.getItem("token") : ""
+export const useGetItem = async(id:number) => {
+    const axiosHeader = getTokenHeader()
 
-const jsonEncodingHeader = (token !== "") ? {
-    "Content-Type": "application/json",
-    "Authorization": `Bearer ${token}`,
-    charset: "utf-8",
-} : {
-    "Content-Type": "application/json",
-    charset: "utf-8",
+    const res = await axiosHeader.get(`${URL}${NON_AUTH_ENDPOINT}/${id}`)
+
+    if(res.status != 200)
+    {
+        throw new Error("Error: " + res.status)
+    }
+
+    return res.data;
 }
 
-const axiosHeader = axios.create({
-    headers: {...jsonEncodingHeader}
-})
+export const usePostItem = async(item: Object) => {
+    const axiosHeader = getTokenHeader()
 
-export const useGetItem = async(id:number) => {
-    const res = await axiosHeader.get(`${URL}${NON_AUTH_ENDPOINT}/${id}`)
+    const res = await axiosHeader.post(`${URL}/item`, item)
 
     if(res.status != 200)
     {

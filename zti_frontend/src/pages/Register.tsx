@@ -1,6 +1,8 @@
-import React, { useReducer, useState } from 'react'
+import { useState } from 'react'
 import { Container, TextField, Typography, Button } from '@mui/material'
+import  Navbar from '../components/Navbar.tsx'
 import { useRegister } from '../hooks/UserHooks'
+import { useNavigate } from 'react-router-dom'
 
 const Register = () => {
 
@@ -13,7 +15,7 @@ const Register = () => {
   const [pass, setPass] = useState("")
   const [passConfirm, setPassConfirm] = useState("")
   const [error, setError] = useState(false)
-
+  const nav = useNavigate()
 
 
   const onSubmit = async(e: any) => {
@@ -22,7 +24,7 @@ const Register = () => {
 
     if(pass === passConfirm) {
 
-      const data = await useRegister({
+      await useRegister({
         fname: fname,
         lname: lname,
         email: email,
@@ -32,11 +34,13 @@ const Register = () => {
         code: code
       });
 
-      localStorage.setItem("token", data.token)
+      nav("/login")
     }
   }
 
   return (
+    <>
+    <Navbar/>
     <Container sx={{display:"flex", justifyContent: "center", marginTop: 10, marginBottom: 10}}>
       <form className='register-form' onSubmit={onSubmit}>
       <Typography 
@@ -162,11 +166,11 @@ const Register = () => {
           type='submit' 
           variant='outlined' 
           sx={{color: "#fff", marginTop: '10%', marginLeft: '25%'}}
-        >Zaloguj</Button>
+        >Sign in</Button>
       </Container>
       </form>
     </Container>
-  )
+  </>)
 }
 
 export default Register

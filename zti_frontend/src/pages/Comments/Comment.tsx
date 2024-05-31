@@ -9,7 +9,7 @@ interface CommentProps{
   sellerid: number
   userid: number
   text: string
-  date: string
+  dateposted: string
   loadComments: () => void
 }
 
@@ -18,7 +18,7 @@ const Comment:React.FC<CommentProps> = ({
     userid,
     sellerid,
     text,
-    date,
+    dateposted,
     loadComments
 }) => {
   
@@ -48,7 +48,7 @@ const Comment:React.FC<CommentProps> = ({
     e.preventDefault()
     const date = new Date()
 
-    await usePutComment(id, {userid: userid, sellerid: sellerid, text: newText, date: date})
+    await usePutComment(id, {userid: userid, sellerid: sellerid, text: newText, dateposted: date})
 
     await loadComments()
     setShowEdit(false)
@@ -62,13 +62,15 @@ const Comment:React.FC<CommentProps> = ({
         {user.email}
       </Typography>
       <Box>
+        <Typography>
+          {dateposted}
+        </Typography>
         {
           !showEdit ? 
           (<Typography>
             {text}
         </Typography>) : (<></>)
         }
-
       </Box>
       {isLogged && user.email === localStorage.getItem("username") && 
         <>
