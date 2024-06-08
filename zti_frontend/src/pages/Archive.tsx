@@ -1,11 +1,11 @@
-import{ useEffect, useState } from 'react'
-import { useGetOffers } from '../hooks/OfferHooks'
-import {Typography } from '@mui/material'
+import { useEffect, useState } from 'react'
+import {useGetOffers } from '../hooks/OfferHooks'
+import { Typography } from '@mui/material'
 import Navbar from '../components/Navbar'
 import { isOfferArchived } from '../hooks/UtilityHooks'
 import OfferList from './Offers/OfferList'
 
-const Home = () => {
+const ArchivedOffers = () => {
 
   const [offers, setOffers] = useState([])
 
@@ -28,7 +28,7 @@ const Home = () => {
       <Navbar/>
       {Object.keys(offers).length > 0 ?
         (
-          <OfferList offers={offers} activation={(offer: any) => !isOfferArchived(offer)} loadOffers={loadOffers} title=""/>
+          <OfferList offers={offers} activation={(offer: any) => isOfferArchived(offer)} loadOffers={loadOffers} title=""/>
         ) : (
           <Typography variant="h4">
             Loading...
@@ -38,4 +38,4 @@ const Home = () => {
   )
 }
 
-export default Home
+export default ArchivedOffers

@@ -2,13 +2,16 @@ import { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { useGetCurrentUser, useGetUser, usePutUser, useDeleteUser } from "../hooks/UserHooks"
 import { Box, Button, Container, TextField, Typography } from "@mui/material"
-import { useGetUsersOffers } from "../hooks/OfferHooks"
-import Offer from "./Offers/Offer"
+import { useGetOffers } from "../hooks/OfferHooks"
 import Navbar from "../components/Navbar"
+import { isOfferArchived } from "../hooks/UtilityHooks"
 import { useGetUserComments, usePostComment } from "../hooks/CommentHooks"
 import Comment from "./Comments/Comment"
 import { useAuth } from "../contexts/AuthContext"
 import { useDeleteRecommend, useGetDislikes, useGetLikes, useGetRecommend, usePostRecommend, usePutRecommend } from "../hooks/RecommendHooks"
+import { useGetUserOrders } from "../hooks/OrderHooks"
+import Order from "./Orders/Order"
+import OfferList from "./Offers/OfferList"
 
 interface IUser
 {
@@ -53,12 +56,20 @@ const Profile = () => {
   const [dislikes, setDislikes] = useState(0)
   const [recommend, setRecommend] = useState<IRecommend>({} as IRecommend)
 
+  //orders
+  const [orders, setOrders] = useState([])
+
   const nav = useNavigate()
 
   const loadUser = async() => {
-    if(id){
-      const data = await useGetUser(parseInt(id))
-      setUser(data)
+    if(id !== undefined){
+      try{
+        const data = await useGetUser(parseInt(id))
+        setUser(data)
+      }
+      catch(e: any){
+        alert(e.message)
+      }
     }
     else
     {
@@ -73,52 +84,26 @@ const Profile = () => {
     }  
   }
 
-  const loadUserOffers = async() => {
-    if(id){
-      const data = await useGetUsersOffers(parseInt(id))
-      setOffers(data)
-      
-    } 
-    else
-    {
-      const data = await useGetUsersOffers(user !== undefined ? user.id : 0)
-      setOffers(data)
-    } 
+  const loadOffers = async() => {
+
+    const data = await useGetOffers()
+    setOffers(data)
+    
   }
 
   const loadUserComments = async() => {
-    if(id)
-    {
-      const data = await useGetUserComments(parseInt(id))
-      setComments(data)
-      
-    }
-    else
-    {
-      const data = await useGetUserComments(user ? user.id : 0)
-      setComments(data)
-    }
+
+    const data = await useGetUserComments(user.id)
+    setComments(data)
+
   }
-
-  const loadUserRecommends = async() => {
-    if(id)
-    {
-      const parsed = parseInt(id)
-      
-      const Ldata = await useGetLikes(parsed)
+  const loadUserRecommends = async() => 
+  {
+      const Ldata = await useGetLikes(user.id)
       setLikes(Ldata)
 
-      const Ddata = await useGetDislikes(parsed)
+      const Ddata = await useGetDislikes(user.id)
       setDislikes(Ddata)
-    }
-    else
-    {
-      const Ldata = await useGetLikes(user ? user.id : 0)
-      setLikes(Ldata)
-
-      const Ddata = await useGetDislikes(user ? user.id : 0)
-      setDislikes(Ddata)
-    }
   }
 
   const loadRecommend = async() =>{
@@ -140,25 +125,47 @@ const Profile = () => {
     }
   }
 
+  const loadOrders = async() =>{
+    const data = await useGetUserOrders(user.id)
+    setOrders(data)
+  
+  }
+
   useEffect(() => {
     loadUser()
   }, [id])
 
   useEffect(() => {
-    loadUserOffers()
-  }, [user])
-
-  useEffect(()=>{
-    loadUserComments()
-  }, [user])
+    if(user.id !== undefined)
+    {
+      loadOffers()
+      loadUserComments()
+      loadUserRecommends()
+      loadRecommend()
+      loadOrders()
+    }
+  },[user.id])
 
   useEffect(() => {
-    loadUserRecommends()
-  }, [user])
+    if(user.id !== undefined)
+    {
+      loadOffers()
+    }
+  },[user.id])
 
   useEffect(() => {
-    loadRecommend()
-  }, [likes, dislikes])
+    if(user.id !== undefined)
+    {
+      loadOffers()
+    }
+  },[user.id])
+
+  useEffect(() => {
+    if(user.id !== undefined)
+    {
+      loadOffers()
+    }
+  },[user.id])
 
   const onSubmit = async(e: any) => {
     e.preventDefault()
@@ -218,7 +225,6 @@ const Profile = () => {
                 <Button
                   onClick={async() => {
                     const email = localStorage.getItem('username')
-                    // await useLogout()
                     await useDeleteUser(email ? email : "");
                     localStorage.clear();
                     setIsLogged(false);
@@ -266,20 +272,28 @@ const Profile = () => {
             {!showEdit ? "Show" : "Close"} Edit
           </Button>
           }
-          <Typography>
-            Offers:
-          </Typography>
           <Container>
-          {offers.map((offer:any) => <Box sx={{display: 'block', maxWidth:'500px', justifyContent: 'center', alignItems: 'center', border: '2px solid red'}}>
-            <Offer id={offer.id} email={user.email} {...offer} />
-            </Box>)}
+          <OfferList offers={offers} activation={(offer:any) => !isOfferArchived(offer) && offer.sellerid === user.id} loadOffers={loadOffers} title="Offers:"/>
           </Container>
           {isLogged && user.email === localStorage.getItem('username') &&
           <Button
-            onClick={() => {nav("/add-offer")}}
+            onClick={() => {nav("/offerbuyauction/0")}}
           >
             Add Offer
           </Button>}
+          {isLogged && user.email === localStorage.getItem('username') &&
+            <>            
+              <Typography>
+                Orders:
+              </Typography>
+              <Container>
+              {orders.map((order:any) => <Box sx={{display: 'block', maxWidth:'500px', justifyContent: 'center', alignItems: 'center', border: '2px solid red'}}>
+                <Order id={order.id} key={order.id} {...order}/>
+              </Box>)}
+              </Container>
+              <OfferList offers={offers} loadOffers={loadOffers} activation={(offer:any) => offer.auctionuserid === user.id} title="Current Auctions:"/>
+            </>
+          }
           {likes != 0 && dislikes != 0 && <>
           <Typography>
             {!showRecommend ? "Recommended by: " + ((likes / (likes + dislikes)) * 100.).toFixed(0) + "%" : "Likes: " + likes + " Dislikes: " + dislikes}

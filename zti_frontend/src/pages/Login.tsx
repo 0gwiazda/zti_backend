@@ -22,9 +22,12 @@ const Login = () => {
 
     localStorage.setItem("token", token.token)
 
-    const decode = jwtDecode(token ? token.token : "")
+    const decode: any = jwtDecode(token ? token.token : "")
     
     localStorage.setItem("username", decode["sub"] ? decode["sub"] : "")
+    localStorage.setItem("user_id", decode["user_id"] ? decode["user_id"] : "")
+
+    console.log(decode);
 
     setIsLogged(true);
     

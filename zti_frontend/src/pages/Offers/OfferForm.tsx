@@ -1,16 +1,34 @@
 import { Button, Container, TextField, Typography } from "@mui/material"
 import Navbar from "../../components/Navbar"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Checkbox } from "@mui/material"
 import { useGetCurrentUser } from "../../hooks/UserHooks"
-import { usePostItem } from "../../hooks/ItemHooks"
-import { usePostOffer } from "../../hooks/OfferHooks"
-import { useNavigate } from "react-router-dom"
+import { useGetItem, usePostItem } from "../../hooks/ItemHooks"
+import { useGetOffer, usePostOffer } from "../../hooks/OfferHooks"
+import { useNavigate, useParams } from "react-router-dom"
 
 
+interface IOffer{
+    id: number,
+    itemid: number,
+    itemcount: number,
+    auction: boolean,
+    startdate: string,
+    enddate: string,
+    sellerid: number
+}
 
+interface IItem{
+    id: number,
+    name: string,
+    description: string,
+    price: number
+}
 
 const OfferForm = () => {
+    const {id} = useParams()
+    const parsedId = parseInt(id ? id: "0");
+
     //Item
     const [name, setName] = useState("")
     const [desc, setDesc] = useState("")
@@ -22,7 +40,36 @@ const OfferForm = () => {
     const [start, setStart] = useState("")
     const [end, setEnd] = useState("")
 
+    //Edit
+    const [editBlock, setEditBlock] = useState(false)
+    
+    const [oldOffer, setOldOffer] = useState<IOffer>({} as IOffer)
+    const [oldItem, setOldItem] = useState<IItem>({} as IItem)
+
     const nav = useNavigate()
+
+    const loadOffer = async() =>{
+        const data = await useGetOffer(parsedId)
+        setOldOffer(data);
+    }
+
+    const loadItem = async() =>{
+        const data = await useGetItem(oldOffer ? oldOffer.itemid : 0)
+        setOldItem(data);
+    }
+
+    useEffect(()=>{
+        if(parsedId != 0)
+        {
+            loadOffer();
+            loadItem();
+
+            setName(oldItem.name);
+            setDesc(oldItem.description);
+            setPrice(oldItem.price);
+
+        }
+    })
   
     const onSubmit = async(e:any) => { 
         e.preventDefault()
@@ -32,7 +79,7 @@ const OfferForm = () => {
         const itemData = {
             name: name,
             description: desc,
-            price: price,
+            price: price*100,
         }
 
         const item = await usePostItem(itemData);
@@ -109,18 +156,18 @@ const OfferForm = () => {
                             Start Date:
                         </Typography>
                         <TextField 
-                            type="date"
+                            type="datetime-local"
                             value={start}
-                            onChange={(e:any) => {setStart(e.target.value)}}
+                            onChange={(e:any) => {setStart(e.target.value + ":00")}}
                             required={true}
                         />
                         <Typography>
                             End Date:
                         </Typography>
                         <TextField 
-                            type="date"
+                            type="datetime-local"
                             value={end}
-                            onChange={(e:any) => {setEnd(e.target.value)}}
+                            onChange={(e:any) => {setEnd(e.target.value + ":00")}}
                             required={true}
                         />
                     </>

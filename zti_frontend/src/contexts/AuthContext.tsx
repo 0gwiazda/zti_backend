@@ -1,15 +1,18 @@
-import { jwtDecode } from 'jwt-decode';
 import {type ReactNode ,createContext, useContext, useEffect, useState } from 'react'
 
 interface IAuthContextType 
 {
     isLogged: boolean,
-    setIsLogged: (state: boolean) => void
+    setIsLogged: (state: boolean) => void,
+    currentUserId: number,
+    setCurrentUserId: (state: number) => void
 }
 
 const AuthContext = createContext<IAuthContextType>({
     isLogged: false,
-    setIsLogged: () => {}
+    setIsLogged: () => {},
+    currentUserId: -1,
+    setCurrentUserId: () => {}
 });
 
 export const useAuth = () =>{
@@ -20,16 +23,21 @@ export const useAuth = () =>{
 export const AuthProvider = ({children} : {children: ReactNode}) => {
     
     const [isLogged, setIsLogged] = useState(false)
+    const [currentUserId, setCurrentUserId] = useState(-1)
     
     useEffect(() => {
         if(localStorage.hasOwnProperty("token"))
         {
             setIsLogged(true)
+            const id = localStorage.getItem("user_id")
+            setCurrentUserId(parseInt(id != null ? id : "-1"))
         }
     }, [])
 
+
+
   
     return (
-        <AuthContext.Provider value={{isLogged, setIsLogged}}>{children}</AuthContext.Provider>
+        <AuthContext.Provider value={{isLogged, setIsLogged, currentUserId, setCurrentUserId}}>{children}</AuthContext.Provider>
   )
 }

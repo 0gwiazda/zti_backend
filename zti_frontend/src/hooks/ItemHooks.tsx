@@ -6,25 +6,34 @@ const NON_AUTH_ENDPOINT = '/auth/item'
 export const useGetItem = async(id:number) => {
     const axiosHeader = getTokenHeader()
 
-    const res = await axiosHeader.get(`${URL}${NON_AUTH_ENDPOINT}/${id}`)
-
-    if(res.status != 200)
+    try
     {
-        throw new Error("Error: " + res.status)
+        const res = await axiosHeader.get(`${URL}${NON_AUTH_ENDPOINT}/${id}`)
+        return res.data
     }
+    catch(error: any)
+    {
+        if(error.response)
+        {
+            throw new Error("ERROR Code: " + error.response.status + "\nError message: " + error.response.data)
+        }
+    }  
 
-    return res.data;
 }
 
 export const usePostItem = async(item: Object) => {
     const axiosHeader = getTokenHeader()
 
-    const res = await axiosHeader.post(`${URL}/item`, item)
-
-    if(res.status != 200)
+    try
     {
-        throw new Error("Error: " + res.status)
+        const res = await axiosHeader.post(`${URL}/item`, item)
+        return res.data
     }
-
-    return res.data;
+    catch(error: any)
+    {
+        if(error.response)
+        {
+            throw new Error("ERROR Code: " + error.response.status + "\nError message: " + error.response.data)
+        }
+    } 
 }

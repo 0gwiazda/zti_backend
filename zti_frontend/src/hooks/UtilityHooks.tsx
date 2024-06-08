@@ -18,3 +18,14 @@ export const getTokenHeader = () =>{
 
     return axiosHeader
 }
+
+export const isOfferArchived = (offer: any) => {
+
+    if(offer.auction){
+        const current = new Date();
+        const endDate = new Date(offer.enddate);
+        return current > endDate
+    }
+
+    return parseInt(offer.itemcount) <= 0
+}

@@ -27,6 +27,15 @@ const Navbar = () => {
           direction="row"
           spacing={2}
         >
+          <NavLink to="/offers/archive">
+            <Typography
+            variant="h5"
+            component="div"
+            sx={{flexGrow: 1, color: 'white'}}
+            >
+              Archived Offers  
+          </Typography>
+          </NavLink>
           {!isLogged ? (<>
           <NavLink to="/login">
             <Typography
@@ -46,7 +55,7 @@ const Navbar = () => {
               Register  
             </Typography>
           </NavLink></>) : (<>
-          <NavLink to="/profile">
+          <NavLink to="/profile/">
             <Typography
               variant="h5"
               component="div"
