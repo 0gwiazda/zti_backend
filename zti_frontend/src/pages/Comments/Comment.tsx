@@ -1,4 +1,4 @@
-import { Box, Button, Container, TextField, Typography} from '@mui/material'
+import { Card, Button, Container, TextField, Typography} from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { useGetUser } from '../../hooks/UserHooks'
 import { useDeleteComment, usePutComment } from '../../hooks/CommentHooks'
@@ -55,13 +55,13 @@ const Comment:React.FC<CommentProps> = ({
   }
 
   return (
-    <Container sx={{display: 'flex', alignItems: 'center', flexDirection: 'column'}}>
+    <Card sx={{display: 'flex', alignItems: 'center', flexDirection: 'column'}}>
       <Typography
         variant='h6'
       >
         {user.email}
       </Typography>
-      <Box>
+      <Container>
         <Typography>
           {dateposted}
         </Typography>
@@ -71,7 +71,7 @@ const Comment:React.FC<CommentProps> = ({
             {text}
         </Typography>) : (<></>)
         }
-      </Box>
+      </Container>
       {isLogged && user.email === localStorage.getItem("username") && 
         <>
           {showEdit && 
@@ -93,13 +93,21 @@ const Comment:React.FC<CommentProps> = ({
             Edit comment
           </Button>
           <Button
-            onClick={async() => {await useDeleteComment(id); await loadComments()}}
+            onClick={async() => {
+              try{
+                await useDeleteComment(id); await loadComments()
+              }
+              catch(err: any)
+              {
+                alert(err.message)
+              }
+            }}
           >
             Delete comment
           </Button>
         </>
       }
-    </Container>
+    </Card>
   )
 }
 

@@ -24,32 +24,38 @@ const Register = () => {
 
     if(pass === passConfirm) {
 
-      await useRegister({
-        fname: fname,
-        lname: lname,
-        email: email,
-        password: pass,
-        address: addr,
-        city: city,
-        code: code
-      });
+      try{
+        await useRegister({
+          fname: fname,
+          lname: lname,
+          email: email,
+          password: pass,
+          address: addr,
+          city: city,
+          code: code
+        });
 
-      nav("/login")
+        nav("/login")
+      }
+      catch(err: any)
+      {
+        alert(err.message)
+      }
+
     }
   }
 
   return (
     <>
     <Navbar/>
-    <Container sx={{display:"flex", justifyContent: "center", marginTop: 10, marginBottom: 10}}>
+    <Container sx={{display:"flex", justifyContent: "center", alignItems: "center", marginTop: 5, marginBottom: 10}}>
       <form className='register-form' onSubmit={onSubmit}>
       <Typography 
         variant="h3"
         marginBottom={'3%'}
-        marginLeft={'13%'}
         marginTop={'3%'}
       >Zarejestruj się</Typography>  
-      <Container sx={{justifyContent: "center", marginLeft: 2.5}}>
+      <Container sx={{justifyContent: "center", alignItems: "center"}}>
       <div className='form-control'>
           <Typography 
             variant="subtitle1"
@@ -165,8 +171,9 @@ const Register = () => {
         <Button 
           type='submit' 
           variant='outlined' 
-          sx={{color: "#fff", marginTop: '10%', marginLeft: '25%'}}
-        >Sign in</Button>
+          sx={{color: "#fff", marginTop: '10%'}}
+        >Sign in
+        </Button>
       </Container>
       </form>
     </Container>

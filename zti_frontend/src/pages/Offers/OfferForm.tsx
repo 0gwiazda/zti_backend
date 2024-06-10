@@ -41,21 +41,31 @@ const OfferForm = () => {
     const [end, setEnd] = useState("")
 
     //Edit
-    const [editBlock, setEditBlock] = useState(false)
-    
     const [oldOffer, setOldOffer] = useState<IOffer>({} as IOffer)
     const [oldItem, setOldItem] = useState<IItem>({} as IItem)
 
     const nav = useNavigate()
 
     const loadOffer = async() =>{
-        const data = await useGetOffer(parsedId)
-        setOldOffer(data);
+        try{
+            const data = await useGetOffer(parsedId)
+            setOldOffer(data);
+        }
+        catch(err: any)
+        {
+            alert(err.message)
+        }
     }
 
     const loadItem = async() =>{
-        const data = await useGetItem(oldOffer ? oldOffer.itemid : 0)
-        setOldItem(data);
+        try{
+            const data = await useGetItem(oldOffer ? oldOffer.itemid : 0)
+            setOldItem(data);
+        }
+        catch(err: any)
+        {
+            alert(err.message)
+        }
     }
 
     useEffect(()=>{
@@ -74,35 +84,40 @@ const OfferForm = () => {
     const onSubmit = async(e:any) => { 
         e.preventDefault()
 
-        const user = await useGetCurrentUser()
+        try{
+            const user = await useGetCurrentUser()
 
-        const itemData = {
-            name: name,
-            description: desc,
-            price: price*100,
-        }
-
-        const item = await usePostItem(itemData);
-
-        if(item)
-        {
-            const offerData = {
-                itemid: item.id,
-                itemcount: count,
-                auction: auction,
-                startdate: start,
-                enddate: end,
-                sellerid: user.id
+            const itemData = {
+                name: name,
+                description: desc,
+                price: price*100,
             }
 
-            const offer = await usePostOffer(offerData)
+            const item = await usePostItem(itemData);
 
-            if(!offer)
+            if(item)
             {
-               alert("oh no")
-            }
+                const offerData = {
+                    itemid: item.id,
+                    itemcount: count,
+                    auction: auction,
+                    startdate: start,
+                    enddate: end,
+                    sellerid: user.id
+                }
 
-            nav("/profile")
+                const offer = await usePostOffer(offerData)
+
+                if(!offer)
+                {
+                alert("oh no")
+                }
+
+                nav("/profile")
+            }
+        }
+        catch(err: any){
+            alert(err.message)
         }
     }
 

@@ -1,11 +1,9 @@
-import { Box, Button, Container, Typography} from '@mui/material'
+import { Card, Button, Container, Typography} from '@mui/material'
 import { Link } from 'react-router-dom'
 import React, { useEffect, useState } from 'react'
 import { useGetItem } from '../../hooks/ItemHooks'
-import { useAuctionOffer, useBuyAuctionOffer, useBuyOffer, useDeleteOffer } from '../../hooks/OfferHooks'
+import {useBuyAuctionOffer, useDeleteOffer } from '../../hooks/OfferHooks'
 import { usePostOrder } from '../../hooks/OrderHooks'
-import { useGetCurrentUser, useGetUser } from '../../hooks/UserHooks'
-import OfferBuyAuctionModal from './OfferBuyAuctionModal'
 import { useAuth } from '../../contexts/AuthContext'
 
 interface OfferProps{
@@ -42,15 +40,18 @@ const Offer:React.FC<OfferProps> = ({
   const {isLogged, currentUserId} = useAuth()
 
   const [item, setItem] = useState<ItemProps>({} as ItemProps)
-  const [isBuyer, setIsBuyer] = useState(false)
   const [isOwner, setIsOwner] = useState(false)
   const [timer, setTimer] = useState(0.0)
 
   const end = Date.parse(enddate)
 
   const loadItem = async() => {
+    try{
     const data = await useGetItem(itemid)
-    setItem(data)
+    setItem(data)}
+    catch(err: any){
+      alert(err.message)
+    }
   }
 
   useEffect(() => {
@@ -72,12 +73,10 @@ const Offer:React.FC<OfferProps> = ({
   const loadUser = async() => {
     if(isLogged)
     {
-      setIsBuyer(sellerid !== currentUserId)
       setIsOwner(sellerid === currentUserId)
     }
     else
     {
-      setIsBuyer(false)
       setIsOwner(false)
     }
   }
@@ -85,50 +84,6 @@ const Offer:React.FC<OfferProps> = ({
   useEffect(() => {
     loadUser()
   }, [])
-
-  const buyItem = async(amount: number) => {
-    if(amount <= itemcount)
-    {
-      const data = await useBuyOffer(id, 
-      {  
-        itemcount: amount,
-        startdate: startdate,
-        enddate: enddate,
-        auction: auction,
-        itemid: itemid,
-        sellerid: sellerid
-      })
-
-      if(data)
-      {
-
-        const order ={
-          offerid: id,
-          quantity: amount,
-          buyerid: currentUserId
-        }
-
-        await usePostOrder(order)
-
-
-        await loadOffers()
-      }
-    }
-    else{
-      alert("Too much")
-    }
-  }
-
-  const onAuction = async(newPrice: number) => {
-    try{
-      const data = await useAuctionOffer(id, newPrice, {itemcount, startdate, enddate, auction, itemid, sellerid})
-
-      await loadOffers()
-    }
-    catch(err: any){
-      alert(err.message)
-    }
-  }
 
   const buyAuction = async() => {
     try{
@@ -163,7 +118,7 @@ const Offer:React.FC<OfferProps> = ({
   }
 
   return (
-    <Box sx={{display: 'block', width: '800px', justifyContent: 'center', alignItems: 'center', border: '2px solid red'}}>
+    <Card sx={{display: 'block', width: '800px', justifyContent: 'center', alignItems: 'center'}}>
       <Container sx={{display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-evenly'}}>
         <Typography
           variant='h6'
@@ -174,14 +129,6 @@ const Offer:React.FC<OfferProps> = ({
           <Typography>
             Quantity: {itemcount}
           </Typography>
-          {/* {auction ? (<Box>
-            <Typography>
-               {"Start: " + startdate}
-            </Typography>
-            <Typography>
-              {"End: " + enddate}
-            </Typography>
-          </Box>) : (<></>)} */}
           <Typography>
             {auction ? "Auction" : "Offer"}
           </Typography>
@@ -205,13 +152,22 @@ const Offer:React.FC<OfferProps> = ({
         }
         {isOwner &&
           <Button
-            onClick={async()=>{await useDeleteOffer(id); await loadOffers()}}
+            onClick={async()=>{
+              try 
+              {
+                await useDeleteOffer(id); await loadOffers()
+              } 
+              catch (error:any) 
+              {
+                alert(error.message)
+              }
+            }}
           >
             Delete Offer
           </Button>
         }
       </Container>
-    </Box>
+    </Card>
   )
 }
 

@@ -14,20 +14,24 @@ const OfferList:React.FC<OfferListProps> = ({
     loadOffers,
     title
 }) => {
+
+  const offerFiltered = offers.filter(offer => activation(offer))
+
   return (
     <>
-        <Typography>
+      {offerFiltered.length > 0 ? (<>
+        <Typography
+          sx={{marginTop: 2}}
+          variant='h5'
+        >
           {title}
         </Typography>
         <Container sx={{display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
-          {offers.map((offer:any) => {
-              const activate = activation(offer)
-              if(activate){
-                return <Offer id={offer.id} {...offer} loadOffers={loadOffers}/>}
-              
-              return <></>
+          {offerFiltered.map((offer:any) => {
+              return <Offer id={offer.id} {...offer} loadOffers={loadOffers}/>
           })}
-        </Container>
+        </Container></>) : (<></>)
+        }
     </>
   )
 }

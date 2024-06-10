@@ -1,8 +1,8 @@
-import { Box, Container, Typography} from '@mui/material'
+import {Card, Container, Typography} from '@mui/material'
 import React, { useEffect, useState } from 'react'
 
 import { useGetItem } from '../../hooks/ItemHooks'
-import { useGetOffer, useGetOfferItem } from '../../hooks/OfferHooks'
+import { useGetOffer } from '../../hooks/OfferHooks'
 
 import { Link } from 'react-router-dom'
 
@@ -61,27 +61,27 @@ const Order:React.FC<OrderProps> = ({
 
 
   return (
-    <Container sx={{display: 'flex', alignItems: 'center', flexDirection: 'column'}}>
+    <Card sx={{display: 'flex', alignItems: 'center', flexDirection: 'column'}}>
       <Typography
         variant='h6'
       >
         {item.name}
       </Typography>
-      <Box>
+      <Container>
         <Typography>
             Quantity: {quantity}
         </Typography>
         <Typography>
             {"Bought for: " + (item.price / 100.0) * quantity + "$"}
         </Typography>
-      </Box>
+      </Container>
       <Typography>
         Offer:
       </Typography>
       <Link to={`/profile/${offer.sellerid}`}>
           Seller Profile
       </Link>
-    </Container>
+    </Card>
   )
 }
 

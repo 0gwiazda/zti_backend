@@ -1,10 +1,10 @@
-import { Box, Button, Container, Typography} from '@mui/material'
+import { Button, Container, Typography} from '@mui/material'
 import { Link, useNavigate, useParams } from 'react-router-dom'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useGetItem } from '../../hooks/ItemHooks'
 import { useAuctionOffer, useBuyOffer, useDeleteOffer, useGetOffer } from '../../hooks/OfferHooks'
 import { usePostOrder } from '../../hooks/OrderHooks'
-import { useGetCurrentUser, useGetUser } from '../../hooks/UserHooks'
+import { useGetCurrentUser } from '../../hooks/UserHooks'
 import OfferBuyAuctionModal from './OfferBuyAuctionModal'
 import { useAuth } from '../../contexts/AuthContext'
 import Navbar from '../../components/Navbar'
@@ -37,7 +37,6 @@ const FullOffer = () => {
 
   const [item, setItem] = useState<ItemProps>({} as ItemProps)
   const [offer, setOffer] = useState<OfferProps>({} as OfferProps)
-  const [amount, setAmount] = useState(0)
   const [isBuyer, setIsBuyer] = useState(false)
   const [isOwner, setIsOwner] = useState(false) 
 
@@ -56,7 +55,7 @@ const FullOffer = () => {
       if(isLogged)
       {
         setIsBuyer(currentUserId !== data.sellerid)
-        setIsOwner(!isBuyer)
+        setIsOwner(currentUserId === data.sellerid)
       }
     }
     catch(err: any){
@@ -66,33 +65,41 @@ const FullOffer = () => {
 
   useEffect(() => {
     loadData()
-  }, [])
+  }, [isLogged])
 
 
-  const buyItem = async() => {
+  const buyItem = async(amount: number) => {
     if(amount <= offer.itemcount)
     {
-      const data = await useBuyOffer(offer.id, 
-      {  
-        itemcount: amount,
-        startdate: offer.startdate,
-        enddate: offer.enddate,
-        auction: offer.auction,
-        itemid: offer.itemid,
-        sellerid: offer.sellerid
-      })
-
-      if(data)
+      try
       {
-        const user = await useGetCurrentUser()
-
-        const order ={
+        const data = await useBuyOffer(offer.id, 
+        {  
+          itemcount: amount,
+          startdate: offer.startdate,
+          enddate: offer.enddate,
+          auction: offer.auction,
           itemid: offer.itemid,
-          quantity: amount,
-          buyerid: user.id
-        }
+          sellerid: offer.sellerid
+        })
 
-        await usePostOrder(order)
+        if(data)
+        {
+          const user = await useGetCurrentUser()
+
+          const order ={
+            offerid: offer.id,
+            quantity: amount,
+            buyerid: user.id
+          }
+
+          await usePostOrder(order)
+
+          nav("/")
+        }
+      }
+      catch(err: any){
+        alert(err.message)
       }
     }
     else{
@@ -102,7 +109,7 @@ const FullOffer = () => {
 
   const onAuction = async(newPrice: number) => {
     try{
-      const data = await useAuctionOffer(offer.id, newPrice, {offer})
+      await useAuctionOffer(offer.id, newPrice, {offer})
     }
     catch(err: any){
       alert(err.message)
@@ -112,9 +119,9 @@ const FullOffer = () => {
   return (
     <>
     <Navbar/>
-    <Container sx={{display: 'flex', flexDirection: 'column'}}>
+    <Container sx={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
       <Typography
-        variant='h6'
+        variant='h4'
       >
         {item.name}
       </Typography>
@@ -125,14 +132,14 @@ const FullOffer = () => {
         <Typography>
           Quantity: {offer.itemcount}
         </Typography>
-        {offer.auction ? (<Box>
+        {offer.auction ? (<Container>
             <Typography>
                {"Start: " + offer.startdate}
             </Typography>
             <Typography>
               {"End: " + offer.enddate}
             </Typography>
-          </Box>) : (<></>)}
+          </Container>) : (<></>)}
       </Container>
       <Typography
         variant='h6'

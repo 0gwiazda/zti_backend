@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import {useGetOffers } from '../hooks/OfferHooks'
-import { Typography } from '@mui/material'
+import { Container, Typography } from '@mui/material'
 import Navbar from '../components/Navbar'
 import { isOfferArchived } from '../hooks/UtilityHooks'
 import OfferList from './Offers/OfferList'
@@ -26,14 +26,22 @@ const ArchivedOffers = () => {
   return (
     <>
       <Navbar/>
-      {Object.keys(offers).length > 0 ?
-        (
-          <OfferList offers={offers} activation={(offer: any) => isOfferArchived(offer)} loadOffers={loadOffers} title=""/>
-        ) : (
-          <Typography variant="h4">
-            Loading...
-          </Typography>
-        )}
+      <Container sx={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
+        <Typography
+          variant='h3'
+          sx={{marginTop: 3, marginBottom: 3}}
+        >
+          Archived Offers
+        </Typography>
+        {Object.keys(offers).length > 0 ?
+          (
+            <OfferList offers={offers} activation={(offer: any) => isOfferArchived(offer)} loadOffers={loadOffers} title=""/>
+          ) : (
+            <Typography variant="h4">
+              Loading...
+            </Typography>
+          )}
+      </Container>
     </>
   )
 }

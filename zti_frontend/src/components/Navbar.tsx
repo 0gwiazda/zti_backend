@@ -1,18 +1,21 @@
-import { AppBar, Stack, Toolbar, Typography } from '@mui/material'
-import { NavLink } from 'react-router-dom'
+import { AppBar, Stack, Toolbar, Typography, useTheme } from '@mui/material'
+import { NavLink, useLocation } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 const Navbar = () => {
 
+  const theme = useTheme()
   const {isLogged, setIsLogged} = useAuth()
+  const [isArchived, setIsArchived] = useState(false)
+  const location = useLocation()
   
   useEffect(() => {
-    console.log(isLogged)
+    setIsArchived(location.pathname === '/offers/archive')
   }, [])
 
   return (
-    <AppBar position='static'>
+    <AppBar position='sticky'>
       <Toolbar sx={{display: 'flex', justifyContent: 'space-between'}}>
         <NavLink to="/">
           <Typography
@@ -26,15 +29,17 @@ const Navbar = () => {
         <Stack
           direction="row"
           spacing={2}
+          color="primary"
+          sx={{backgroundColor: theme.palette.primary.main}}
         >
-          <NavLink to="/offers/archive">
+          <NavLink to={!isArchived ? "/offers/archive" : "/"}>
             <Typography
             variant="h5"
             component="div"
             sx={{flexGrow: 1, color: 'white'}}
             >
-              Archived Offers  
-          </Typography>
+              {!isArchived ? "Archived Offers" : "Current Offers"}  
+            </Typography>
           </NavLink>
           {!isLogged ? (<>
           <NavLink to="/login">
