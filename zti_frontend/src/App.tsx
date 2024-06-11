@@ -59,6 +59,20 @@ function App() {
           }
         }
       },
+      MuiFilledInput:{
+        styleOverrides: {
+          root:{
+            color: "white", 
+            backgroundColor: "#b6c7d1",
+            '&:hover': {
+              backgroundColor: '#9daab5', // Change hover color here
+            },
+            '&.Mui-focused':{
+              backgroundColor: '#9daab5',
+            }
+          },
+        }
+      }
     }
   })
 

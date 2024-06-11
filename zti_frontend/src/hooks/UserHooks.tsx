@@ -74,6 +74,29 @@ export const useRegister = async(user: Object) =>
     }    
 }
 
+export const useChangePassword = async(oldPassword: string, newPassword: string) =>
+{
+    const axiosHeader = getTokenHeader()
+
+    try{
+        const passRequest = {
+            password: oldPassword,
+            newPassword: newPassword
+        }
+
+        const res = await axiosHeader.post(`${URL}/user/change-password`, passRequest)
+
+        return res.data
+    }
+    catch(error: any)
+    {
+        if(error.response)
+        {
+            throw new Error("ERROR Code: " + error.response.status + "\nError message: " + error.response.data)
+        }
+    }
+}
+
 export const usePutUser = async(user: Object) => 
 {
     const axiosHeader = getTokenHeader()

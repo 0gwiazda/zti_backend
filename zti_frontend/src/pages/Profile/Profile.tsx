@@ -13,6 +13,8 @@ import OfferList from "../Offers/OfferList"
 import ProfileEditModal from "./ProfileEditModal"
 import CommentList from "../Comments/CommentList"
 import OrderList from "../Orders/OrderList"
+import OfferFormModal from "../Offers/OfferFormModal"
+import ProfileChangePassModal from "./ProfileChangePassModal"
 
 interface IUser
 {
@@ -198,9 +200,7 @@ const Profile = () => {
               </Typography>
               <Container sx={{flexDirection: "row"}}>
                 <ProfileEditModal loadUser={loadUser} {...user}/>
-                {/* <Button sx={{marginRight: 1}}>
-                  Change password
-                </Button> */}
+                <ProfileChangePassModal loadUser={loadUser}/>
                 <Button 
                   onClick={async() => {
                     try{
@@ -224,11 +224,8 @@ const Profile = () => {
           <OfferList offers={offers} activation={(offer:any) => !isOfferArchived(offer) && offer.sellerid === user.id} loadOffers={loadOffers} title="Offers:"/>
           </Container>
           {isLogged && user.email === localStorage.getItem('username') &&
-          <Button
-            onClick={() => {nav("/offerbuyauction/0")}}
-          >
-            Add Offer
-          </Button>}
+          <OfferFormModal loadOffers={loadOffers}/>
+          }
           {isLogged && user.email === localStorage.getItem('username') &&
             <>            
               <Container>
