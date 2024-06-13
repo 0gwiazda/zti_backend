@@ -74,4 +74,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> authLoginException(AuthLoginException e) {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
     }
+
+    @ExceptionHandler(AdminException.class)
+    public ResponseEntity<String> adminException(AdminException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
+    }
 }

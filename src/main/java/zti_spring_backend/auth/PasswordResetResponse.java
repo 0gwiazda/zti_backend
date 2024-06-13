@@ -10,14 +10,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RegisterRequest {
-
-    private String fname;
-    private String lname;
-    private String email;
+public class PasswordResetResponse {
     private String password;
-    private String address;
-    private String city;
-    private String code;
-
 }

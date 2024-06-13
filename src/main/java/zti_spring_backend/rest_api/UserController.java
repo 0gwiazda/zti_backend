@@ -11,12 +11,15 @@ import org.springframework.web.bind.annotation.*;
 import zti_spring_backend.auth.AuthService;
 import zti_spring_backend.auth.AuthenticationResponse;
 import zti_spring_backend.auth.PasswordChangeRequest;
+import zti_spring_backend.auth.PasswordResetResponse;
+import zti_spring_backend.exception.AdminException;
 import zti_spring_backend.exception.ItemNotFoundException;
 import zti_spring_backend.exception.UserNotFoundException;
 import zti_spring_backend.model.User;
 import zti_spring_backend.repo.*;
 
 import java.util.List;
+import java.util.Random;
 
 @RestController
 public class UserController {
@@ -69,6 +72,19 @@ public class UserController {
         String username = auth.getName();
 
         return ResponseEntity.ok(authService.changePassword(username, passwordChangeRequest.getPassword(), passwordChangeRequest.getNewPassword()));
+    }
+
+    @PutMapping("/user/reset-password/{id}")
+    public ResponseEntity<PasswordResetResponse> resetPassword(@PathVariable long id){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        var user = userRepository.findByEmail(auth.getName()).orElseThrow(() -> new UserNotFoundException(id));
+
+        if(!user.getRole().equals("ADMIN"))
+            throw new AdminException("You are not admin");
+
+
+
+        return ResponseEntity.ok(authService.resetPassword(id));
     }
 
     @PutMapping("/user/me")

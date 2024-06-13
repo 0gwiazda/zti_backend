@@ -54,6 +54,12 @@ public class OfferController {
 
     @PostMapping("/offer")
     public ResponseEntity<Offer> addOffer(@RequestBody Offer offer) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        var user = userRepository.findByEmail(auth.getName()).orElseThrow(() -> new UserNotFoundException(auth.getName()));
+
+        if(user.getRole().equals("ADMIN"))
+            throw new AdminException("Admin cannot create offers");
+
         return ResponseEntity.ok(offerRepository.save(offer));
     }
 
@@ -63,6 +69,12 @@ public class OfferController {
 
         if(toBuy.getItemcount() - offer.getItemcount() < 0)
             throw new OfferInvalidItemCountException(id, toBuy.getItemcount());
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        var user = userRepository.findByEmail(auth.getName()).orElseThrow(() -> new UserNotFoundException(auth.getName()));
+
+        if(user.getRole().equals("ADMIN"))
+            throw new AdminException("Admin cannot buy auctions");
 
         toBuy.setItemcount(toBuy.getItemcount() - offer.getItemcount());
 
@@ -87,6 +99,9 @@ public class OfferController {
         String email = auth.getName();
         var user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException(email));
 
+        if(user.getRole().equals("ADMIN"))
+            throw new AdminException("Admin cannot participate in auctions");
+
         toAuction.setAuctionuserid(user.getId());
         var item = itemRepository.findById(toAuction.getItemid()).orElseThrow(() -> new ItemNotFoundException(toAuction.getItemid()));
 
@@ -106,6 +121,9 @@ public class OfferController {
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         var user = userRepository.findByEmail(auth.getName()).orElseThrow(() -> new UserNotFoundException(auth.getName()));
+
+        if(user.getRole().equals("ADMIN"))
+            throw new AdminException("Admin cannot buy auctions");
 
         if(!toBuyAuction.isAuction())
             throw new OfferInvalidAuctionDataException(id);

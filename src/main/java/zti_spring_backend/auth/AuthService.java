@@ -17,6 +17,7 @@ import zti_spring_backend.repo.UserRepository;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -47,6 +48,7 @@ public class AuthService {
         userRepository.save(user);
         var claims = new HashMap<String, Object>();
         claims.put("user_id", user.getId());
+        claims.put("user_role", user.getRole());
         var token = jwtService.generateToken(claims, user);
 
         return AuthenticationResponse.builder().token(token).build();
@@ -70,6 +72,7 @@ public class AuthService {
 
         var claims = new HashMap<String, Object>();
         claims.put("user_id", user.getId());
+        claims.put("user_role", user.getRole());
         var token = jwtService.generateToken(claims, user);
 
         return AuthenticationResponse.builder().token(token).build();
@@ -84,8 +87,31 @@ public class AuthService {
 
         var claims = new HashMap<String, Object>();
         claims.put("user_id", user.getId());
+        claims.put("user_role", user.getRole());
         var token = jwtService.generateToken(claims, user);
 
         return AuthenticationResponse.builder().token(token).build();
     }
+
+    public PasswordResetResponse resetPassword (long id){
+
+        int leftLimit = 48; // numeral '0'
+        int rightLimit = 122; // letter 'z'
+        int targetStringLength = 10;
+        Random random = new Random();
+
+        String generatedString = random.ints(leftLimit, rightLimit + 1)
+                .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
+                .limit(targetStringLength)
+                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+                .toString();
+
+        userRepository.findById(id).map(oldUser -> {
+            oldUser.setPassword(passwordEncoder.encode(generatedString));
+            return userRepository.save(oldUser);
+        }).orElseThrow(() -> new UserNotFoundException(id));
+
+        return PasswordResetResponse.builder().password(generatedString).build();
+    }
+
 }
