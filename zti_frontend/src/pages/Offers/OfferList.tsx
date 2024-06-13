@@ -28,7 +28,7 @@ const OfferList:React.FC<OfferListProps> = ({
         </Typography>
         <Container sx={{display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
           {offerFiltered.map((offer:any) => {
-              return <Offer id={offer.id} {...offer} loadOffers={loadOffers}/>
+              return <Offer id={offer.id} key={offer.id} {...offer} loadOffers={loadOffers}/>
           })}
         </Container></>) : (<></>)
         }

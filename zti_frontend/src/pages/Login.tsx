@@ -27,6 +27,7 @@ const Login = () => {
       
       localStorage.setItem("username", decode["sub"] ? decode["sub"] : "")
       localStorage.setItem("user_id", decode["user_id"] ? decode["user_id"] : "")
+      localStorage.setItem("user_role", decode["user_role"] ? decode["user_role"] : "")
 
       console.log(decode);
 

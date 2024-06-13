@@ -23,6 +23,23 @@ export const useGetUser = async(id:number) =>
     }
 }
 
+export const useGetUsers = async() =>
+{
+    const axiosHeader = getTokenHeader()
+
+    try{
+        const res = await axiosHeader.get(`${URL}/user`)
+        return res.data
+    }
+    catch(error: any)
+    {
+        if(error.response)
+        {
+            throw new Error("ERROR Code: " + error.response.status + "\nError message: " + error.response.data)
+        }
+    }
+}
+
 export const useGetCurrentUser = async() =>
 {
     const axiosHeader = getTokenHeader()
@@ -148,4 +165,20 @@ export const useLogout = async() =>
             throw new Error("ERROR Code: " + error.response.status + "\nError message: " + error.response.data)
         }
     }  
+}
+
+export const useResetPassword = async(id: number) =>
+{
+    const axiosHeader = getTokenHeader()
+
+    try {
+        const res = await axiosHeader.put(`${URL}/user/reset-password/${id}`)
+        return res.data
+    } 
+    catch (error: any) {
+        if(error.response)
+        {
+            throw new Error("ERROR Code: " + error.response.status + "\nError message: " + error.response.data)
+        }
+    }
 }

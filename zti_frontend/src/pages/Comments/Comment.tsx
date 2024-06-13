@@ -40,8 +40,15 @@ const Comment:React.FC<CommentProps> = ({
     setUser(data)
   }
 
+  const [date, setDate] = useState<Array<string>>([])
+
+  const parseDate = () =>{
+    setDate(dateposted.split("T"))
+  }
+
   useEffect(() => {
     loadUser()
+    parseDate()
   }, [])
 
   const onSubmit = async(e: any) => {
@@ -63,7 +70,7 @@ const Comment:React.FC<CommentProps> = ({
       </Typography>
       <Container>
         <Typography>
-          {dateposted}
+          {date[0] + " " + date[1]}
         </Typography>
         {
           !showEdit ? 

@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react'
 const Navbar = () => {
 
   const theme = useTheme()
-  const {isLogged, setIsLogged} = useAuth()
+  const {isLogged, setIsLogged, isAdmin, setIsAdmin} = useAuth()
   const [isArchived, setIsArchived] = useState(false)
   const location = useLocation()
   
@@ -32,6 +32,17 @@ const Navbar = () => {
           color="primary"
           sx={{backgroundColor: theme.palette.primary.main}}
         >
+          {isAdmin &&
+            <NavLink to="/admin">
+              <Typography
+                variant="h5"
+                component="div"
+                sx={{flexGrow: 1, color: 'white'}}
+              >
+                Admin Panel
+              </Typography>
+            </NavLink>
+          }
           <NavLink to={!isArchived ? "/offers/archive" : "/"}>
             <Typography
             variant="h5"
@@ -70,7 +81,7 @@ const Navbar = () => {
             </Typography>
           </NavLink>
           <NavLink to="/"
-            onClick={() => {localStorage.clear(); setIsLogged(false);}}
+            onClick={() => {localStorage.clear(); setIsLogged(false); setIsAdmin(false)}}
           >
             <Typography
               variant="h5"

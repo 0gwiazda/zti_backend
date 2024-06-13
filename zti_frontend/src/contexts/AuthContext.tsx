@@ -4,6 +4,8 @@ interface IAuthContextType
 {
     isLogged: boolean,
     setIsLogged: (state: boolean) => void,
+    isAdmin: boolean,
+    setIsAdmin: (state: boolean) => void,
     currentUserId: number,
     setCurrentUserId: (state: number) => void
 }
@@ -11,6 +13,8 @@ interface IAuthContextType
 const AuthContext = createContext<IAuthContextType>({
     isLogged: false,
     setIsLogged: () => {},
+    isAdmin: false,
+    setIsAdmin: () => {},
     currentUserId: -1,
     setCurrentUserId: () => {}
 });
@@ -23,6 +27,7 @@ export const useAuth = () =>{
 export const AuthProvider = ({children} : {children: ReactNode}) => {
     
     const [isLogged, setIsLogged] = useState(false)
+    const [isAdmin, setIsAdmin] = useState(false)
     const [currentUserId, setCurrentUserId] = useState(-1)
     
     useEffect(() => {
@@ -32,12 +37,18 @@ export const AuthProvider = ({children} : {children: ReactNode}) => {
             const id = localStorage.getItem("user_id")
             setCurrentUserId(parseInt(id != null ? id : "-1"))
         }
-    }, [])
+
+        if(localStorage.hasOwnProperty("user_role"))
+        {
+            setIsAdmin(localStorage.getItem("user_role") === "ADMIN")
+        }
+        
+    }, [isLogged])
 
 
 
   
     return (
-        <AuthContext.Provider value={{isLogged, setIsLogged, currentUserId, setCurrentUserId}}>{children}</AuthContext.Provider>
+        <AuthContext.Provider value={{isLogged, setIsLogged, isAdmin, setIsAdmin, currentUserId, setCurrentUserId}}>{children}</AuthContext.Provider>
   )
 }

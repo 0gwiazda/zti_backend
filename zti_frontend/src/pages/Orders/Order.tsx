@@ -75,9 +75,9 @@ const Order:React.FC<OrderProps> = ({
             {"Bought for: " + (item.price / 100.0) * quantity + "$"}
         </Typography>
       </Container>
-      <Typography>
-        Offer:
-      </Typography>
+      <Link to={`/offer/${offer.id}`}>
+          Offer
+      </Link>
       <Link to={`/profile/${offer.sellerid}`}>
           Seller Profile
       </Link>

@@ -8,6 +8,7 @@ import { useGetCurrentUser } from '../../hooks/UserHooks'
 import OfferBuyAuctionModal from './OfferBuyAuctionModal'
 import { useAuth } from '../../contexts/AuthContext'
 import Navbar from '../../components/Navbar'
+import { getTimer } from '../../hooks/UtilityHooks'
 
 
 const FullOffer = () => {
@@ -35,10 +36,13 @@ const FullOffer = () => {
 
   const {isLogged, currentUserId} = useAuth()
 
+
   const [item, setItem] = useState<ItemProps>({} as ItemProps)
   const [offer, setOffer] = useState<OfferProps>({} as OfferProps)
   const [isBuyer, setIsBuyer] = useState(false)
   const [isOwner, setIsOwner] = useState(false) 
+
+  const {days, hours, minutes, seconds} = getTimer(offer.enddate)
 
   const loadData = async() => {
     try{
@@ -47,9 +51,9 @@ const FullOffer = () => {
       if(Object.keys(data).length > 0)
       {
         const item = await useGetItem(data.itemid)
-
         setItem(item)
         setOffer(data)
+
       }
 
       if(isLogged)
@@ -65,7 +69,8 @@ const FullOffer = () => {
 
   useEffect(() => {
     loadData()
-  }, [isLogged])
+  }, [isLogged, id, currentUserId])
+
 
 
   const buyItem = async(amount: number) => {
@@ -133,12 +138,19 @@ const FullOffer = () => {
           Quantity: {offer.itemcount}
         </Typography>
         {offer.auction ? (<Container>
-            <Typography>
-               {"Start: " + offer.startdate}
+            {/* <Typography>
+              {"Start: " + offer.startdate.replace("T", " ")}
             </Typography>
             <Typography>
-              {"End: " + offer.enddate}
-            </Typography>
+              {"End: " + offer.enddate.replace("T", " ")}
+            </Typography> */}
+            {(seconds > 0 || days > 0 || hours > 0 || minutes > 0) ?
+              (<Typography
+                variant='h6'
+                color={(days == 0 && hours == 0) ? '#F00' : "#000"}
+              >
+                Time left: {`${days > 10 ? days : "0" + days}:${hours > 10 ? hours : "0" + hours}:${minutes > 10 ? minutes : "0" + minutes}:${seconds > 10 ? seconds : "0" + seconds}`}
+              </Typography>) : (<Typography>Auction ended</Typography>)}
           </Container>) : (<></>)}
       </Container>
       <Typography

@@ -3,9 +3,10 @@ import Home from '../pages/Home'
 import Login from '../pages/Login'
 import Register from '../pages/Register'
 import Profile from '../pages/Profile/Profile'
-import OfferForm from '../pages/Offers/OfferFormModal'
 import FullOffer from '../pages/Offers/FullOffer'
 import ArchivedOffers from '../pages/Archive'
+import NotFound from '../pages/NotFound'
+import AdminPanel from '../pages/AdminPanel'
 
 export const RouterPaths = createBrowserRouter([
     {
@@ -31,5 +32,13 @@ export const RouterPaths = createBrowserRouter([
     {
         path: "/offers/archive",
         element: <ArchivedOffers/>
+    },
+    {
+        path: "/admin",
+        element: <AdminPanel/>
+    },
+    {
+        path:"/*",
+        element: <NotFound/>
     }
 ])

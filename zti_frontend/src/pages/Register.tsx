@@ -32,7 +32,7 @@ const Register = () => {
           password: pass,
           address: addr,
           city: city,
-          code: code
+          code: code,
         });
 
         nav("/login")
