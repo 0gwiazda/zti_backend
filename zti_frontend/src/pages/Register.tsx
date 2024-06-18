@@ -3,6 +3,8 @@ import { Container, TextField, Typography, Button } from '@mui/material'
 import  Navbar from '../components/Navbar.tsx'
 import { useRegister } from '../hooks/UserHooks'
 import { useNavigate } from 'react-router-dom'
+import { jwtDecode } from 'jwt-decode'
+import { useAuth } from '../contexts/AuthContext.tsx'
 
 const Register = () => {
 
@@ -17,6 +19,7 @@ const Register = () => {
   const [error, setError] = useState(false)
   const nav = useNavigate()
 
+  const {setIsLogged} = useAuth()
 
   const onSubmit = async(e: any) => {
     e.preventDefault()
@@ -25,7 +28,7 @@ const Register = () => {
     if(pass === passConfirm) {
 
       try{
-        await useRegister({
+        const token = await useRegister({
           fname: fname,
           lname: lname,
           email: email,
@@ -35,7 +38,19 @@ const Register = () => {
           code: code,
         });
 
-        nav("/login")
+        localStorage.setItem("token", token.token)
+
+        const decode: any = jwtDecode(token ? token.token : "")
+        
+        localStorage.setItem("username", decode["sub"] ? decode["sub"] : "")
+        localStorage.setItem("user_id", decode["user_id"] ? decode["user_id"] : "")
+        localStorage.setItem("user_role", decode["user_role"] ? decode["user_role"] : "")
+
+        console.log(decode);
+
+        setIsLogged(true);
+        
+        nav("/")
       }
       catch(err: any)
       {

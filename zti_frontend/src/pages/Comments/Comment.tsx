@@ -80,7 +80,9 @@ const Comment:React.FC<CommentProps> = ({
         }
       </Container>
       {isLogged && user.email === localStorage.getItem("username") && 
-        <>
+        <Container
+          sx={{justifyContent: 'space-around', alignItems: 'center', flexDirection: 'row'}}
+        >
           {showEdit && 
             <form onSubmit={onSubmit}>
               <TextField
@@ -97,7 +99,7 @@ const Comment:React.FC<CommentProps> = ({
           <Button
             onClick={()=>setShowEdit(!showEdit)}
           >
-            Edit comment
+            Edit
           </Button>
           <Button
             onClick={async() => {
@@ -110,9 +112,9 @@ const Comment:React.FC<CommentProps> = ({
               }
             }}
           >
-            Delete comment
+            Delete
           </Button>
-        </>
+        </Container>
       }
     </Card>
   )

@@ -1,4 +1,4 @@
-import { Button, Container, Typography} from '@mui/material'
+import { Button, Card, Container, Typography} from '@mui/material'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { useGetItem } from '../../hooks/ItemHooks'
@@ -124,13 +124,15 @@ const FullOffer = () => {
   return (
     <>
     <Navbar/>
-    <Container sx={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
+    <Card sx={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
       <Typography
         variant='h4'
       >
         {item.name}
       </Typography>
-      <Typography>
+      <Typography
+        variant='h6'
+      >
         {item.description}
       </Typography>
       <Container sx={{display: 'flex', margin: '5px auto', flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center'}}>
@@ -138,19 +140,20 @@ const FullOffer = () => {
           Quantity: {offer.itemcount}
         </Typography>
         {offer.auction ? (<Container>
-            {/* <Typography>
+            <Typography>
               {"Start: " + offer.startdate.replace("T", " ")}
             </Typography>
             <Typography>
               {"End: " + offer.enddate.replace("T", " ")}
-            </Typography> */}
-            {(seconds > 0 || days > 0 || hours > 0 || minutes > 0) ?
-              (<Typography
+            </Typography>
+            <Typography
                 variant='h6'
-                color={(days == 0 && hours == 0) ? '#F00' : "#000"}
-              >
-                Time left: {`${days > 10 ? days : "0" + days}:${hours > 10 ? hours : "0" + hours}:${minutes > 10 ? minutes : "0" + minutes}:${seconds > 10 ? seconds : "0" + seconds}`}
-              </Typography>) : (<Typography>Auction ended</Typography>)}
+                color={(days < 0 && hours < 0) ? '#F00' : "#000"}>
+            {(seconds > 0 || days > 0 || hours > 0 || minutes > 0) ?
+              (
+
+                `Time left: ${days > 10 ? days : "0" + days}:${hours > 10 ? hours : "0" + hours}:${minutes > 10 ? minutes : "0" + minutes}:${seconds > 10 ? seconds : "0" + seconds}`
+             ) : ("Auction ended")}</Typography>
           </Container>) : (<></>)}
       </Container>
       <Typography
@@ -162,7 +165,7 @@ const FullOffer = () => {
       <Link to={`/profile/${offer.sellerid}`}>
         Seller Profile
       </Link>
-      {isBuyer &&
+      {isBuyer && ((seconds > 0 || days > 0 || hours > 0 || minutes > 0) || !offer.auction) &&
         <OfferBuyAuctionModal OnSubmit={buyItem} price={item.price / 100.0} auction={offer.auction} OnAuction={onAuction}/>
       }
       {isOwner &&
@@ -172,7 +175,7 @@ const FullOffer = () => {
           Delete Offer
         </Button>
       }
-    </Container></>
+    </Card></>
   )
 }
 

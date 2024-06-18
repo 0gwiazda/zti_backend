@@ -38,7 +38,7 @@ interface IRecommend
 
 const Profile = () => {
   const {id} = useParams()
-  const {isLogged, setIsLogged} = useAuth()
+  const {isLogged, setIsLogged, currentUserId} = useAuth()
 
   const [user, setUser] = useState<IUser>({} as IUser)
   const [offers, setOffers] = useState([])
@@ -117,11 +117,9 @@ const Profile = () => {
     {
       try
       {
-        const curr = await useGetCurrentUser()
-        
         let data;
 
-        data = await useGetRecommend(curr.id, user.id)
+        data = await useGetRecommend(currentUserId, user.id)
 
         setRecommend(data ? data : {})
       }
@@ -132,9 +130,12 @@ const Profile = () => {
   }
 
   const loadOrders = async() =>{
-    try{
-      const data = await useGetUserOrders(user.id)
-      setOrders(data)
+    try{    
+      if(user.email === localStorage.getItem('username') && isLogged)
+      {
+        const data = await useGetUserOrders(user.id)
+        setOrders(data)
+      }
     }
     catch(err:any){alert(err.message)}
   }
@@ -158,11 +159,9 @@ const Profile = () => {
     e.preventDefault()
 
     try{
-      const loggedUser = await useGetCurrentUser();
-
       const date = new Date()
 
-      await usePostComment({userid: loggedUser.id, sellerid: user.id, text: text, dateposted: date});
+      await usePostComment({userid: currentUserId, sellerid: user.id, text: text, dateposted: date});
 
       await loadUserComments()
     }
@@ -221,7 +220,10 @@ const Profile = () => {
             </Container>}
           </Container>
           <Container>
-          <OfferList offers={offers} activation={(offer:any) => !isOfferArchived(offer) && offer.sellerid === user.id} loadOffers={loadOffers} title="Offers:"/>
+          <OfferList offers={offers} activation={(offer:any) => !isOfferArchived(offer) && offer.sellerid === user.id} loadOffers={loadOffers} title="Current Offers:"/>
+          </Container>
+          <Container>
+          <OfferList offers={offers} activation={(offer:any) => isOfferArchived(offer) && offer.sellerid === user.id} loadOffers={loadOffers} title="Archived Offers:"/>
           </Container>
           {isLogged && user.email === localStorage.getItem('username') &&
           <OfferFormModal loadOffers={loadOffers}/>
@@ -229,17 +231,17 @@ const Profile = () => {
           {isLogged && user.email === localStorage.getItem('username') &&
             <>            
               <Container>
-              <OrderList orders={orders} loadOrders={loadOrders} title="Orders:" activation={() => true}/>
+              <OrderList orders={orders} loadOrders={loadOrders} title="Orders:"/>
               </Container>
               <OfferList offers={offers} loadOffers={loadOffers} activation={(offer:any) => offer.auctionuserid === user.id} title="Current Auctions:"/>
             </>
           }
-          {likes != 0 && dislikes != 0 && <>
+          {likes != 0 || dislikes != 0 ? (<>
           <Typography>
             {!showRecommend ? "Recommended by: " + ((likes / (likes + dislikes)) * 100.).toFixed(0) + "%" : "Likes: " + likes + " Dislikes: " + dislikes}
-          </Typography></>}
+          </Typography></>) : (<Typography>Not rated by any user</Typography>)}
           <Container sx={{flexDirection: "row", justifyContent: "space-evenly", minWidth: 500, width: 250}}>
-            {likes != 0 && dislikes != 0 && <Button
+            {(likes != 0 || dislikes != 0) && <Button
               onClick={() => setShowRecommend(!showRecommend)}
             >
               {!showRecommend ? "Expand" : "Collapse"}
@@ -313,17 +315,20 @@ const Profile = () => {
             <CommentList comments={comments} loadComments={loadUserComments} title="Comments:" activation={() => true}/>
             {user.email !== localStorage.getItem("username") && isLogged &&
             <form onSubmit={onSubmit}>
-              <TextField
-                type="text"
-                placeholder="Input comment..."
-                value={text}
-                onChange={(e) => setText(e.target.value)}
-              />
-              <Button
-                type="submit"
-              >
-                Add comment
-              </Button>
+              <Container>
+                <TextField
+                  type="text"
+                  placeholder="Input comment..."
+                  value={text}
+                  onChange={(e) => setText(e.target.value)}
+                />
+                <Button
+                  sx={{marginTop: 1}}
+                  type="submit"
+                >
+                  Add comment
+                </Button>
+              </Container>
             </form>
           }
           </Container>

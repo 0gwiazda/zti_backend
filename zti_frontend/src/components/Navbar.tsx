@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react'
 const Navbar = () => {
 
   const theme = useTheme()
-  const {isLogged, setIsLogged, isAdmin, setIsAdmin} = useAuth()
+  const {isLogged, setIsLogged, isAdmin, setIsAdmin, setCurrentUserId} = useAuth()
   const [isArchived, setIsArchived] = useState(false)
   const location = useLocation()
   
@@ -81,7 +81,7 @@ const Navbar = () => {
             </Typography>
           </NavLink>
           <NavLink to="/"
-            onClick={() => {localStorage.clear(); setIsLogged(false); setIsAdmin(false)}}
+            onClick={() => {localStorage.clear(); setIsLogged(false); setIsAdmin(false); setCurrentUserId(0);}}
           >
             <Typography
               variant="h5"
