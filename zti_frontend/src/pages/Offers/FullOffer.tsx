@@ -114,7 +114,7 @@ const FullOffer = () => {
 
   const onAuction = async(newPrice: number) => {
     try{
-      await useAuctionOffer(offer.id, newPrice, {offer})
+      await useAuctionOffer(offer.id, newPrice*100, {offer})
     }
     catch(err: any){
       alert(err.message)
@@ -165,7 +165,7 @@ const FullOffer = () => {
       <Link to={`/profile/${offer.sellerid}`}>
         Seller Profile
       </Link>
-      {isBuyer && ((seconds > 0 || days > 0 || hours > 0 || minutes > 0) || !offer.auction) &&
+      {isBuyer && ((seconds > 0 || days > 0 || hours > 0 || minutes > 0) && offer.itemcount > 0 || !offer.auction) &&
         <OfferBuyAuctionModal OnSubmit={buyItem} price={item.price / 100.0} auction={offer.auction} OnAuction={onAuction}/>
       }
       {isOwner &&

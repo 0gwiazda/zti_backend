@@ -231,9 +231,9 @@ const Profile = () => {
           {isLogged && user.email === localStorage.getItem('username') &&
             <>            
               <Container>
+              <OfferList offers={offers} loadOffers={loadOffers} activation={(offer:any) => offer.auctionuserid === user.id} title="Current Auctions:"/>
               <OrderList orders={orders} loadOrders={loadOrders} title="Orders:"/>
               </Container>
-              <OfferList offers={offers} loadOffers={loadOffers} activation={(offer:any) => offer.auctionuserid === user.id} title="Current Auctions:"/>
             </>
           }
           {likes != 0 || dislikes != 0 ? (<>

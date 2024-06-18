@@ -95,14 +95,14 @@ const OfferBuyAuctionModal:React.FC<ModalProps> = ({
                 >
                     Please type how many items you want to purchase.
                 </Typography></Container>)}
-        </Stack>) : (<Stack sx={{display: 'flex', position: 'fixed', width: 500, height: 300,  alignItems: "center", justifyContent: "space-evenly", left: '50%', right: '50%', top: '50%', bottom: '50%', transform: "translate(-50%, -50%)", backgroundColor: "#333333", borderRadius: "8px"}}>
+        </Stack>) : (<Stack sx={{display: 'flex', position: 'fixed', width: 500, height: 300,  alignItems: "center", justifyContent: "space-evenly", left: '50%', right: '50%', top: '50%', bottom: '50%', transform: "translate(-50%, -50%)"}}>
             {price > 0 ? (<form onSubmit={onAuction}>
                 <Typography
                     variant="h5"
                 >
-                    Do you want to participate in auction for {price}$?
+                    Do you want to participate in auction for {newPrice}$?
                 </Typography>
-                <Card sx={{display: 'flex', minWidth: 300, justifyContent: 'space-evenly'}}>
+                <Container sx={{display: 'flex', minWidth: 300, justifyContent: 'space-evenly'}}>
                     <Button
                         sx={{color: "white"}}
                         type="submit"
@@ -114,13 +114,13 @@ const OfferBuyAuctionModal:React.FC<ModalProps> = ({
                     >
                         Cancel
                     </Button>
-                </Card>
-            </form>):(<Card sx={{display: 'flex', minWidth: 300, justifyContent: "center"}}><Typography
+                </Container>
+            </form>):(<Container sx={{display: 'flex', minWidth: 300, justifyContent: "center"}}><Typography
                     variant="h5"
                     align="center"
                 >
-                    Please type how many items you want to purchase.
-                </Typography></Card>)}</Stack>)}
+                    Please type how much you want to auction for item.
+                </Typography></Container>)}</Stack>)}
         </Modal>
     </>
   )
