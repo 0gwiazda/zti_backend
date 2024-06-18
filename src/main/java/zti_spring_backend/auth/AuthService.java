@@ -28,6 +28,11 @@ public class AuthService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
+    /**
+     * Method for registering new user and adding him to the database
+     * @param registerRequest Request containing user data
+     * @return AuthenticationResponse containing JWT token
+     */
     public AuthenticationResponse register (RegisterRequest registerRequest){
 
         var checkUser = userRepository.findByEmail(registerRequest.getEmail());
@@ -54,6 +59,11 @@ public class AuthService {
         return AuthenticationResponse.builder().token(token).build();
     }
 
+    /**
+     * Method for authenticating users
+     * @param authRequest containing email and password
+     * @return AuthenticationRequest containing JWT token
+     */
     public AuthenticationResponse auth (AuthenticationRequest authRequest){
 
         try{
@@ -78,6 +88,13 @@ public class AuthService {
         return AuthenticationResponse.builder().token(token).build();
     }
 
+    /**
+     * Method for changing user's password, while they're logged in.
+     * @param email user email
+     * @param currentPassword current user password
+     * @param newPassword new user password
+     * @return AuthenticationResponse with new JWT token
+     */
     public AuthenticationResponse changePassword (String email, String currentPassword, String newPassword){
 
         var user = userRepository.findByEmail(email).map(oldUser -> {
@@ -93,6 +110,11 @@ public class AuthService {
         return AuthenticationResponse.builder().token(token).build();
     }
 
+    /**
+     * Admin method for resetting users password.
+     * @param id user id
+     * @return PasswordResetResponse with new generated password
+     */
     public PasswordResetResponse resetPassword (long id){
 
         int leftLimit = 48; // numeral '0'

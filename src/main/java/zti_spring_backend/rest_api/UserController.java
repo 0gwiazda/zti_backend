@@ -1,5 +1,8 @@
 package zti_spring_backend.rest_api;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
@@ -22,6 +25,7 @@ import java.util.List;
 import java.util.Random;
 
 @RestController
+@Tag(name="User Controller", description = "Controller for user operations")
 public class UserController {
 
     @Autowired
@@ -47,11 +51,19 @@ public class UserController {
 
 
     @GetMapping("/user")
+    @Operation(summary = "Get all users", description = "Gets all users. If current user isn't admin, throws AdminException", security = @SecurityRequirement(name = "bearerAuth"))
     public ResponseEntity<List<User>> allUsers(){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        var user = userRepository.findByEmail(auth.getName()).orElseThrow(() -> new UserNotFoundException(auth.getName()));
+
+        if(!user.getRole().equals("ADMIN"))
+            throw new AdminException("You are not admin");
+
         return ResponseEntity.ok(userRepository.findAll());
     }
 
     @GetMapping("/user/me")
+    @Operation(summary = "Get current user", security = @SecurityRequirement(name = "bearerAuth"))
     public ResponseEntity<User> findCurrentUser(){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
@@ -61,11 +73,13 @@ public class UserController {
     }
 
     @GetMapping("/auth/user/{id}")
+    @Operation(summary = "Get a user with matching id")
     public ResponseEntity<User> getUser(@PathVariable long id){
         return ResponseEntity.ok(userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id)));
     }
 
     @PostMapping("/user/change-password")
+    @Operation(summary = "Change password of current user", security = @SecurityRequirement(name = "bearerAuth"))
     public ResponseEntity<AuthenticationResponse> changePassword(@RequestBody PasswordChangeRequest passwordChangeRequest){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
@@ -75,6 +89,7 @@ public class UserController {
     }
 
     @PutMapping("/user/reset-password/{id}")
+    @Operation(summary = "Reset password for user", description="Resets password for user with matching id. If current user isn't admin throws AdminException", security = @SecurityRequirement(name = "bearerAuth"))
     public ResponseEntity<PasswordResetResponse> resetPassword(@PathVariable long id){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         var user = userRepository.findByEmail(auth.getName()).orElseThrow(() -> new UserNotFoundException(id));
@@ -88,6 +103,7 @@ public class UserController {
     }
 
     @PutMapping("/user/me")
+    @Operation(summary = "Edit current user", security = @SecurityRequirement(name = "bearerAuth"))
     public ResponseEntity<User> editUser(@RequestBody User user)
     {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -106,7 +122,8 @@ public class UserController {
 
     @Transactional
     @DeleteMapping("/user")
-    public ResponseEntity<String> deleteUser(HttpServletRequest req, HttpServletResponse resp, @RequestParam String email)
+    @Operation(summary = "Delete user and all connected records with matching email", security = @SecurityRequirement(name = "bearerAuth"))
+    public ResponseEntity<String> deleteUser(@RequestParam String email)
     {
         var user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException(email));
 
