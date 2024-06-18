@@ -16,7 +16,7 @@ const UserList:React.FC<UserListProps> = ({
       {users.length > 0 ? (<>
         <Typography
           sx={{marginTop: 2}}
-          variant='h5'
+          variant='h4'
         >
           {title}
         </Typography>

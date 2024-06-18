@@ -24,7 +24,7 @@ const OrderList:React.FC<OrderListProps> = ({
         </Typography>
         <Container sx={{display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
           {orders.map((order:any) => {
-              return <Order id={order.id} {...order} loadOrders={loadOrders}/>
+              return <Order id={order.id} key={order.id} {...order} loadOrders={loadOrders}/>
           })}
         </Container></>) : (<></>)
         }

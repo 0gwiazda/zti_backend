@@ -38,7 +38,7 @@ interface IRecommend
 
 const Profile = () => {
   const {id} = useParams()
-  const {isLogged, setIsLogged, currentUserId} = useAuth()
+  const {isLogged, setIsLogged, isAdmin, currentUserId} = useAuth()
 
   const [user, setUser] = useState<IUser>({} as IUser)
   const [offers, setOffers] = useState([])
@@ -198,8 +198,9 @@ const Profile = () => {
                 Code: {user.code}
               </Typography>
               <Container sx={{flexDirection: "row"}}>
-                <ProfileEditModal loadUser={loadUser} {...user}/>
                 <ProfileChangePassModal loadUser={loadUser}/>
+                {!isAdmin && <>
+                <ProfileEditModal loadUser={loadUser} {...user}/>
                 <Button 
                   onClick={async() => {
                     try{
@@ -213,9 +214,10 @@ const Profile = () => {
                       alert(err.message);
                     }
                   }}
+                  
                 >
                   Delete Profile
-                </Button>
+                </Button></>}
               </Container>
             </Container>}
           </Container>
@@ -236,17 +238,18 @@ const Profile = () => {
               </Container>
             </>
           }
-          {likes != 0 || dislikes != 0 ? (<>
+          {(!isAdmin || user.email !== localStorage.getItem('username')) && (likes != 0 || dislikes != 0 ? (<>
           <Typography>
             {!showRecommend ? "Recommended by: " + ((likes / (likes + dislikes)) * 100.).toFixed(0) + "%" : "Likes: " + likes + " Dislikes: " + dislikes}
-          </Typography></>) : (<Typography>Not rated by any user</Typography>)}
+          </Typography></>) : (<Typography>Not rated by any user</Typography>))}
           <Container sx={{flexDirection: "row", justifyContent: "space-evenly", minWidth: 500, width: 250}}>
-            {(likes != 0 || dislikes != 0) && <Button
+            {(likes != 0 || dislikes != 0) && 
+            <Button
               onClick={() => setShowRecommend(!showRecommend)}
             >
               {!showRecommend ? "Expand" : "Collapse"}
             </Button>}
-            {isLogged && user.email !== localStorage.getItem('username') ? (<>
+            {isLogged && !isAdmin && user.email !== localStorage.getItem('username') ? (<>
             <Button
               onClick={async() => {
                 try{
@@ -312,8 +315,8 @@ const Profile = () => {
             </Button></>) : (<></>)}
           </Container>
           <Container>
-            <CommentList comments={comments} loadComments={loadUserComments} title="Comments:" activation={() => true}/>
-            {user.email !== localStorage.getItem("username") && isLogged &&
+            <CommentList comments={comments} loadComments={loadUserComments} title="Comments:"/>
+            {user.email !== localStorage.getItem("username") && isLogged && !isAdmin &&
             <form onSubmit={onSubmit}>
               <Container>
                 <TextField

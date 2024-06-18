@@ -1,4 +1,4 @@
-import { Card, Button, Modal, Stack, TextField, Typography, Container } from "@mui/material"
+import { Button, Modal, Stack, TextField, Typography, Container } from "@mui/material"
 import React, { useState } from "react"
 
 interface ModalProps{

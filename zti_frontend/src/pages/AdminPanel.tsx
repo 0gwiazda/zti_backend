@@ -29,7 +29,8 @@ const AdminPanel = () => {
         <Navbar/>
         <Container>
             <Typography
-                variant="h4"
+                variant="h3"
+                sx={{marginTop: 3}}
             >
                 Admin Panel
             </Typography>

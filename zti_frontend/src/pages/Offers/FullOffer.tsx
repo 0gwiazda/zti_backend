@@ -34,7 +34,7 @@ const FullOffer = () => {
     auctionuserid: number
   }
 
-  const {isLogged, currentUserId} = useAuth()
+  const {isLogged, currentUserId, isAdmin} = useAuth()
 
 
   const [item, setItem] = useState<ItemProps>({} as ItemProps)
@@ -58,7 +58,7 @@ const FullOffer = () => {
 
       if(isLogged)
       {
-        setIsBuyer(currentUserId !== data.sellerid)
+        setIsBuyer(currentUserId !== data.sellerid && !isAdmin)
         setIsOwner(currentUserId === data.sellerid)
       }
     }
@@ -165,7 +165,7 @@ const FullOffer = () => {
       <Link to={`/profile/${offer.sellerid}`}>
         Seller Profile
       </Link>
-      {isBuyer && ((seconds > 0 || days > 0 || hours > 0 || minutes > 0) && offer.itemcount > 0 || !offer.auction) &&
+      {isBuyer && ((seconds > 0 || days > 0 || hours > 0 || minutes > 0)|| !offer.auction) && offer.itemcount > 0  &&
         <OfferBuyAuctionModal OnSubmit={buyItem} price={item.price / 100.0} auction={offer.auction} OnAuction={onAuction}/>
       }
       {isOwner &&

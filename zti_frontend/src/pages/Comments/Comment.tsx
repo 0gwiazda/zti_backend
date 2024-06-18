@@ -10,7 +10,7 @@ interface CommentProps{
   userid: number
   text: string
   dateposted: string
-  loadComments: () => void
+  loadComments: () => Promise<void>
 }
 
 const Comment:React.FC<CommentProps> = ({
@@ -104,7 +104,8 @@ const Comment:React.FC<CommentProps> = ({
           <Button
             onClick={async() => {
               try{
-                await useDeleteComment(id); await loadComments()
+                await useDeleteComment(id); 
+                await loadComments()
               }
               catch(err: any)
               {

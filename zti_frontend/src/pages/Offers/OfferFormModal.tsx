@@ -67,6 +67,7 @@ const OfferFormModal:React.FC<FormProps> = ({
     return (
     <>
         <Button 
+            sx={{marginBottom: 2, marginTop: 1}}
             onClick={() => setOpen(true)}
         >
             Add Offer
