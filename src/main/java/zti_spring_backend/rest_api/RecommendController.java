@@ -36,8 +36,8 @@ public class RecommendController {
 
     @GetMapping("/auth/recommend/seller/{id}")
     @Operation(summary = "Count likes or dislikes for seller with matching sellerid", security = @SecurityRequirement(name = "bearerAuth"))
-    public ResponseEntity<Long> getLikedRecommend(@PathVariable long sellerid, @RequestParam boolean liked){
-        return ResponseEntity.ok(recommendRepository.countBySelleridAndLiked(sellerid, liked));
+    public ResponseEntity<Long> getLikedRecommend(@PathVariable long id, @RequestParam boolean liked){
+        return ResponseEntity.ok(recommendRepository.countBySelleridAndLiked(id, liked));
     }
 
     @PostMapping("/recommend")

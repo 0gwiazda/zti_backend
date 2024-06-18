@@ -79,4 +79,8 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> adminException(AdminException e) {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
     }
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<String> exception(Exception e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }
