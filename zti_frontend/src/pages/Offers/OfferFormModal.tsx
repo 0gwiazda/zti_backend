@@ -4,6 +4,7 @@ import { Checkbox } from "@mui/material"
 import {  usePostItem } from "../../hooks/ItemHooks"
 import {  usePostOffer } from "../../hooks/OfferHooks"
 import { useAuth } from "../../contexts/AuthContext"
+import { usePostImage } from "../../hooks/ImageHooks"
 
 
 interface FormProps{
@@ -34,6 +35,11 @@ const OfferFormModal:React.FC<FormProps> = ({
         e.preventDefault()
 
         try{
+            const file = e.target[0].files[0]
+
+            const formData = new FormData();
+            formData.append('file', file);
+
             const itemData = {
                 name: name,
                 description: desc,
@@ -52,6 +58,8 @@ const OfferFormModal:React.FC<FormProps> = ({
                     enddate: end,
                     sellerid: currentUserId
                 }
+    
+                await usePostImage(formData, item.id);
 
                 await usePostOffer(offerData)
                 await loadOffers()
@@ -84,6 +92,14 @@ const OfferFormModal:React.FC<FormProps> = ({
                 </Typography>
                 <form onSubmit={onSubmit}>
                     <Container>
+                    <FormGroup>
+                        <FormLabel htmlFor="image">Item Image:</FormLabel>
+                        <FilledInput
+                        type="file"
+                        id="image"
+                        required
+                        />
+                    </FormGroup>
                     <FormGroup>
                         <FormLabel htmlFor="name">Item Name:</FormLabel>
                         <FilledInput

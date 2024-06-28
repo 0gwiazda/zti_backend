@@ -1,7 +1,6 @@
-import { useEffect, useState } from 'react'
 import { getTokenHeader } from './UtilityHooks'
 
-const URL = 'http://localhost:8080'
+const URL = 'http://localhost:8081'
 const NON_AUTH_ENDPOINT = '/auth/offer'
 
 export const useGetOffers = async() => {

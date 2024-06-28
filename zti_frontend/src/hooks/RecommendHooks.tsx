@@ -1,6 +1,6 @@
 import { getTokenHeader } from "./UtilityHooks";
 
-const URL = 'http://localhost:8080'
+const URL = 'http://localhost:8081'
 const NON_AUTH_ENDPOINT = '/auth/recommend'
 
 export const useGetLikes = async(id: number) =>{

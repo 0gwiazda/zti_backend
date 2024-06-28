@@ -1,10 +1,12 @@
 import { Card, Button, Container, Typography} from '@mui/material'
 import { Link } from 'react-router-dom'
 import React, { useEffect, useState } from 'react'
-import { useGetItem } from '../../hooks/ItemHooks'
+import { useDeleteItem, useGetItem } from '../../hooks/ItemHooks'
 import {useBuyAuctionOffer, useDeleteOffer } from '../../hooks/OfferHooks'
-import { usePostOrder } from '../../hooks/OrderHooks'
+import { useCountOrders, usePostOrder } from '../../hooks/OrderHooks'
 import { useAuth } from '../../contexts/AuthContext'
+import { useDeleteImage, useGetImage } from '../../hooks/ImageHooks'
+import OfferAddImageModal from './OfferAddImageModal'
 
 interface OfferProps{
   id: number
@@ -42,13 +44,29 @@ const Offer:React.FC<OfferProps> = ({
   const [item, setItem] = useState<ItemProps>({} as ItemProps)
   const [isOwner, setIsOwner] = useState(false)
   const [timer, setTimer] = useState(0.0)
+  const [orderCheck, setOrderCheck] = useState(false)
+  const [imageCheck, setImageCheck] = useState(false)
+  const [image, setImage] = useState<string | null>(null)
 
   const end = Date.parse(enddate)
 
   const loadItem = async() => {
     try{
     const data = await useGetItem(itemid)
-    setItem(data)}
+    setItem(data)
+  
+    const imageData = await useGetImage(data.id)
+    console.log(imageData)
+    if(imageData.size > 0){
+      const url = URL.createObjectURL(imageData);
+
+      setImage(url);
+      setImageCheck(true)
+    }
+    else{
+      setImageCheck(false)
+    }
+  }
     catch(err: any){
       alert(err.message)
     }
@@ -74,6 +92,10 @@ const Offer:React.FC<OfferProps> = ({
     if(isLogged)
     {
       setIsOwner(sellerid === currentUserId)
+
+      const count = await useCountOrders(id);
+
+      setOrderCheck(count <= 0)
     }
     else
     {
@@ -120,6 +142,13 @@ const Offer:React.FC<OfferProps> = ({
   return (
     <Card sx={{display: 'block', width: '800px', justifyContent: 'center', alignItems: 'center'}}>
       <Container sx={{display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-evenly'}}>
+        {imageCheck && <Container
+          component="img"
+          src={image ? image : ""}
+          sx={{width: '50%', height: '50%', maxWidth: 800, maxHeight: 800}}
+        >
+
+        </Container>}
         <Typography
           variant='h6'
         >
@@ -150,12 +179,19 @@ const Offer:React.FC<OfferProps> = ({
             Buy Item {auctionuserid + "  " + currentUserId}
           </Button>
         }
-        {isOwner &&
+        {
+          isOwner && !imageCheck &&
+          <OfferAddImageModal loadOffers={loadOffers} itemid={itemid}/>
+        }
+        {isOwner && orderCheck &&
           <Button
             onClick={async()=>{
               try 
               {
-                await useDeleteOffer(id); await loadOffers()
+                await useDeleteOffer(id); 
+                await useDeleteImage(itemid);
+                await useDeleteItem(itemid);
+                await loadOffers()
               } 
               catch (error:any) 
               {

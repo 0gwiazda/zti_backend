@@ -1,14 +1,16 @@
 import { Button, Card, Container, Typography} from '@mui/material'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useEffect, useState } from 'react'
-import { useGetItem } from '../../hooks/ItemHooks'
+import { useDeleteItem, useGetItem } from '../../hooks/ItemHooks'
 import { useAuctionOffer, useBuyOffer, useDeleteOffer, useGetOffer } from '../../hooks/OfferHooks'
-import { usePostOrder } from '../../hooks/OrderHooks'
+import { useCountOrders, usePostOrder } from '../../hooks/OrderHooks'
 import { useGetCurrentUser } from '../../hooks/UserHooks'
 import OfferBuyAuctionModal from './OfferBuyAuctionModal'
 import { useAuth } from '../../contexts/AuthContext'
 import Navbar from '../../components/Navbar'
 import { getTimer } from '../../hooks/UtilityHooks'
+import { useDeleteImage, useGetImage } from '../../hooks/ImageHooks'
+import OfferAddImageModal from './OfferAddImageModal'
 
 
 const FullOffer = () => {
@@ -41,6 +43,9 @@ const FullOffer = () => {
   const [offer, setOffer] = useState<OfferProps>({} as OfferProps)
   const [isBuyer, setIsBuyer] = useState(false)
   const [isOwner, setIsOwner] = useState(false) 
+  const [orderCheck, setOrderCheck] = useState(false)
+  const [imageCheck, setImageCheck] = useState(false)
+  const [image, setImage] = useState<null | string>(null);
 
   const {days, hours, minutes, seconds} = getTimer(offer.enddate)
 
@@ -54,12 +59,26 @@ const FullOffer = () => {
         setItem(item)
         setOffer(data)
 
+        const imageData = await useGetImage(data.itemid)
+        if(imageData.size > 0){
+          const url = URL.createObjectURL(imageData);
+
+          setImage(url);
+          setImageCheck(true)
+        }
+        else
+        {
+          setImageCheck(false)
+        }
       }
 
       if(isLogged)
       {
         setIsBuyer(currentUserId !== data.sellerid && !isAdmin)
         setIsOwner(currentUserId === data.sellerid)
+        const count = await useCountOrders(parseInt(id ? id : "0"));
+
+        setOrderCheck(count <= 0)
       }
     }
     catch(err: any){
@@ -125,6 +144,20 @@ const FullOffer = () => {
     <>
     <Navbar/>
     <Card sx={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
+      {imageCheck ?
+        (<Container
+          component="img"
+          src={image ? image : ""}
+          sx={{width: 'auto', height: 'auto', maxWidth: 600, maxHeight: 600}}
+        >
+        </Container>) : (<Container>
+          <Typography
+            variant="h3"
+            sx={{marginBottom: 5}}
+          >
+            Image not found
+          </Typography>
+        </Container>)}
       <Typography
         variant='h4'
       >
@@ -152,7 +185,7 @@ const FullOffer = () => {
             {(seconds > 0 || days > 0 || hours > 0 || minutes > 0) ?
               (
 
-                `Time left: ${days > 10 ? days : "0" + days}:${hours > 10 ? hours : "0" + hours}:${minutes > 10 ? minutes : "0" + minutes}:${seconds > 10 ? seconds : "0" + seconds}`
+                `Time left: ${days != 1 ? days + " days" : days + " day"} ${hours + "h"} ${minutes + "min."} ${seconds + "s"}`
              ) : ("Auction ended")}</Typography>
           </Container>) : (<></>)}
       </Container>
@@ -168,9 +201,24 @@ const FullOffer = () => {
       {isBuyer && ((seconds > 0 || days > 0 || hours > 0 || minutes > 0)|| !offer.auction) && offer.itemcount > 0  &&
         <OfferBuyAuctionModal OnSubmit={buyItem} price={item.price / 100.0} auction={offer.auction} OnAuction={onAuction}/>
       }
-      {isOwner &&
+      {
+        isOwner && !imageCheck &&
+        <OfferAddImageModal loadOffers={async() => await loadData()} itemid={offer.itemid}/>
+      }
+      {isOwner && orderCheck &&
         <Button
-          onClick={async()=>{await useDeleteOffer(offer.id); nav("/")}}
+          onClick={async()=>{
+            try {
+              await useDeleteOffer(offer.id); 
+              await useDeleteImage(offer.itemid);
+              await useDeleteItem(offer.itemid);
+              nav("/")
+            } 
+            catch (error: any) 
+            {
+              alert(error.message)
+            }
+          }}
         >
           Delete Offer
         </Button>

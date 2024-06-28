@@ -1,6 +1,6 @@
 import {getTokenHeader} from './UtilityHooks'
 
-const URL = 'http://localhost:8080'
+const URL = 'http://localhost:8081'
 const NON_AUTH_ENDPOINT = '/auth/comment'
 
 export const useGetUserComments = async(id:number) =>
@@ -8,7 +8,7 @@ export const useGetUserComments = async(id:number) =>
     const axiosHeader = getTokenHeader()
 
     try{
-        const res = await axiosHeader.get(`${URL}${NON_AUTH_ENDPOINT}/seller/${id}`)
+        const res = await axiosHeader.get(`${URL}${NON_AUTH_ENDPOINT}/seller/${id}`, {withCredentials: true})
         return res.data
     }
     catch(error: any)
