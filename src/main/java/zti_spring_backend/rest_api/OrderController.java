@@ -38,6 +38,12 @@ public class OrderController {
         return ResponseEntity.ok(orderRepository.findAllByBuyerid(userId));
     }
 
+    @GetMapping("/count-orders/{offerid}")
+    @Operation(summary = "Count all orders attached to an offer by offerid")
+    public ResponseEntity<Long> countOrders(@PathVariable long offerid) {
+        return ResponseEntity.ok(orderRepository.countByOfferid(offerid));
+    }
+
     @PostMapping("/order")
     @Operation(summary = "Add an order", security = @SecurityRequirement(name = "bearerAuth"))
     public ResponseEntity<Order> createOrder(@RequestBody Order order)
@@ -47,15 +53,6 @@ public class OrderController {
 
         return ResponseEntity.ok(orderRepository.save(order));
     }
-
-//    @PutMapping("/order/{id}")
-//    @Operation(summary = "Edit an order")
-//    public ResponseEntity<Order> updateOrder(@PathVariable long id, @RequestBody Order order) {
-//        return ResponseEntity.ok(orderRepository.findById(id).map(oldOrder -> {
-//            oldOrder.setQuantity(order.getQuantity());
-//            return orderRepository.save(oldOrder);
-//        }).orElseGet(() -> orderRepository.save(order)));
-//    }
 
     @DeleteMapping("/order/{id}")
     @Operation(summary = "Delete an order with matching id", security = @SecurityRequirement(name = "bearerAuth"))

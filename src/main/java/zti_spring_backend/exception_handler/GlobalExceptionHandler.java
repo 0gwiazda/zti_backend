@@ -79,6 +79,17 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> adminException(AdminException e) {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
     }
+
+    @ExceptionHandler(ImageNotFoundException.class)
+    public ResponseEntity<String> imageNotFoundException(ImageNotFoundException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(ImageInvalidTypeException.class)
+    public ResponseEntity<String> imageInvalidTypeException(ImageInvalidTypeException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> exception(Exception e) {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);

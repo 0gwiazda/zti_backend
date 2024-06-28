@@ -167,6 +167,9 @@ public class OfferController {
         if(user.getId() != offer.getSellerid())
             throw new OfferNotFoundException(id, user.getId());
 
+        if(orderRepository.countByOfferid(id) > 0)
+            throw new OfferInvalidDeleteOperationException("Cannot delete an offer with orders.");
+
         offerRepository.deleteById(id);
         return ResponseEntity.ok(null);
     }

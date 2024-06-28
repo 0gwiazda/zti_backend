@@ -13,5 +13,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     public void deleteAllByBuyerid(Long userId);
 
+    public long countByOfferid(Long offerid);
+
     public boolean existsById(Long id);
 }
