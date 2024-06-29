@@ -33,16 +33,19 @@ public class ImageService {
     @Autowired
     private ResourceLoader resourceLoader;
 
-    private static final List<String> ALLOWED_FILE_TYPES = Arrays.asList("image/jpeg", "image/png", "image/gif");
+    private static final List<String> ALLOWED_FILE_TYPES = Arrays.asList(".jpeg", ".png", ".gif", ".jpg");
 
     public Image saveImage(MultipartFile file, long itemid) throws IOException {
-        String fileType = file.getContentType();
+        String fileType = file.getOriginalFilename();
+
+        if(fileType != null)
+            fileType = fileType.substring(file.getOriginalFilename().lastIndexOf("."));
 
         if (fileType == null || !ALLOWED_FILE_TYPES.contains(fileType))
             throw new ImageInvalidTypeException(fileType);
 
 
-        Path path = Paths.get(uploadDir, "images");
+        Path path = Paths.get(System.getProperty("user.dir") + "/" + uploadDir, "images");
 
         if(!Files.exists(path))
             Files.createDirectories(path);
