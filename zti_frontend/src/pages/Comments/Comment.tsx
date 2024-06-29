@@ -43,7 +43,10 @@ const Comment:React.FC<CommentProps> = ({
   const [date, setDate] = useState<Array<string>>([])
 
   const parseDate = () =>{
-    setDate(dateposted.split("T"))
+    var _list = dateposted.split("T")
+    var second = _list[1].split('.')[0]
+    var date = [_list[0], second]
+    setDate(date)
   }
 
   useEffect(() => {
@@ -98,6 +101,7 @@ const Comment:React.FC<CommentProps> = ({
           }
           <Button
             onClick={()=>setShowEdit(!showEdit)}
+            sx={{marginRight: 2}}
           >
             Edit
           </Button>

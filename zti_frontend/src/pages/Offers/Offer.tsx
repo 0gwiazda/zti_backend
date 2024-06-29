@@ -176,11 +176,11 @@ const Offer:React.FC<OfferProps> = ({
           <Button
             onClick={()=>{buyAuction()}}
           >
-            Buy Item {auctionuserid + "  " + currentUserId}
+            Buy Item
           </Button>
         }
         {
-          isOwner && !imageCheck &&
+          isOwner && !imageCheck && (timer > 0 || (!auction && itemcount > 0)) &&
           <OfferAddImageModal loadOffers={loadOffers} itemid={itemid}/>
         }
         {isOwner && orderCheck &&

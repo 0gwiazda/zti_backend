@@ -55,6 +55,15 @@ const Register = () => {
       catch(err: any)
       {
         alert(err.message)
+        setFname("")
+        setLname("")
+        setEmail("")
+        setCity("")
+        setAddr("")
+        setCode("")
+        setPass("")
+        setPassConfirm("")
+        setError(true)
       }
 
     }

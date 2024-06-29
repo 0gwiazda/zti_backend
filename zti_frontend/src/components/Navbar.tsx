@@ -81,7 +81,7 @@ const Navbar = () => {
             </Typography>
           </NavLink>
           <NavLink to="/"
-            onClick={() => {localStorage.clear(); setIsLogged(false); setIsAdmin(false); setCurrentUserId(0);}}
+            onClick={() => {localStorage.clear(); setIsLogged(false); setIsAdmin(false); setCurrentUserId(-1);}}
           >
             <Typography
               variant="h5"

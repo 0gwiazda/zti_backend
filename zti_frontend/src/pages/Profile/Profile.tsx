@@ -227,7 +227,7 @@ const Profile = () => {
           <Container>
           <OfferList offers={offers} activation={(offer:any) => isOfferArchived(offer) && offer.sellerid === user.id} loadOffers={loadOffers} title="Archived Offers:"/>
           </Container>
-          {isLogged && user.email === localStorage.getItem('username') &&
+          {isLogged && user.email === localStorage.getItem('username') && !isAdmin &&
           <OfferFormModal loadOffers={loadOffers}/>
           }
           {isLogged && user.email === localStorage.getItem('username') &&

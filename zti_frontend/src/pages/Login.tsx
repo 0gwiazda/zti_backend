@@ -38,6 +38,9 @@ const Login = () => {
     catch(err: any)
     {
       alert(err.message)
+      setEmail("")
+      setPass("")
+      setError(true)
     }
   }
 

@@ -11,6 +11,8 @@ const UserList:React.FC<UserListProps> = ({
     title
 }) => {
 
+  users = users.filter((user: any) => user.role !== 'ADMIN')
+
   return (
     <>
       {users.length > 0 ? (<>

@@ -6,14 +6,15 @@ interface UserProps{
     id: number,
     fname: string,
     lname: string,
-    email: string
+    email: string,
+    role:string
 }
 
 const User:React.FC<UserProps> = ({
     id,
     fname,
     lname,
-    email
+    email,
 }) => {
   
 
