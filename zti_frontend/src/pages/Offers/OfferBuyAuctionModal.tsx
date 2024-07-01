@@ -40,7 +40,7 @@ const OfferBuyAuctionModal:React.FC<ModalProps> = ({
                 <TextField
                     sx={{marginTop: 2}}
                     value={amount}
-                    onChange={(e:any) => {!Number.isNaN(parseInt(e.target.value)) ? setAmount(parseInt(e.target.value)) : setAmount(0)}}
+                    onChange={(e:any) => {!Number.isNaN(parseInt(e.target.value)) && parseInt(e.target.value) > 0 ? setAmount(parseInt(e.target.value)) : setAmount(0)}}
                 />
                 <Button
                     sx={{marginTop: 1}}
@@ -54,7 +54,7 @@ const OfferBuyAuctionModal:React.FC<ModalProps> = ({
                 <TextField
                     sx={{marginTop: 2}}
                     value={newPrice}
-                    onChange={(e:any) => setPrice(parseInt(e.target.value))}
+                    onChange={(e:any) => !Number.isNaN(parseInt(e.target.value)) && parseInt(e.target.value) > price ? setPrice(parseInt(e.target.value)) : setPrice(price)}
                 />
                 <Button
                     sx={{marginTop: 1}}

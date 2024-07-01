@@ -126,7 +126,7 @@ const OfferFormModal:React.FC<FormProps> = ({
                         type="number"
                         id="price"
                         value={price}
-                        onChange={(e) => setPrice(Number.isNaN(parseInt(e.target.value)) ? 0 : parseInt(e.target.value))}
+                        onChange={(e) => setPrice(Number.isNaN(parseInt(e.target.value)) && parseInt(e.target.value) <= 0 ? 0 : parseInt(e.target.value))}
                         required
                         />
                     </FormGroup>
@@ -136,7 +136,7 @@ const OfferFormModal:React.FC<FormProps> = ({
                         type="number"
                         id="count"
                         value={count}
-                        onChange={(e) => setCount(Number.isNaN(parseInt(e.target.value)) ? 0 : parseInt(e.target.value))}
+                        onChange={(e) => setCount(Number.isNaN(parseInt(e.target.value)) && parseInt(e.target.value) <= 0 ? 0 : parseInt(e.target.value))}
                         required
                         />
                     </FormGroup>
