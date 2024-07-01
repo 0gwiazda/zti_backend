@@ -6,6 +6,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Request for changing password. Contains old password and new password.
+ */
 @Data
 @Builder
 @AllArgsConstructor

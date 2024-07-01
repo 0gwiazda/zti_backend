@@ -1,17 +1,15 @@
 package zti_spring_backend.exception;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
+/**
+ * Exception throw when auction contains invalid data.
+ */
 public class OfferInvalidAuctionDataException extends RuntimeException {
-    public OfferInvalidAuctionDataException(LocalDate localDate) {
-        super("Auction has already ended on " + localDate.toString());
-    }
-
-    public OfferInvalidAuctionDataException(long id, long userId) {
-        super("Invalid auction winner user id: " + userId + " for offer with id: " + id);
-    }
-
+    /**
+     * Constructor for exception, when offer with provided id is not an auction.
+     * @param id of offer.
+     */
     public OfferInvalidAuctionDataException(long id){
         super("Offer with id: " + id + " is not an auction");
     }

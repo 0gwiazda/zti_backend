@@ -6,6 +6,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Request for registering a new user. Contains user data such as first and last name, full address with city and code, email and password.
+ */
 @Data
 @Builder
 @AllArgsConstructor

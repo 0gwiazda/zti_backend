@@ -15,14 +15,31 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 
 
+/**
+ * Security Configuration describing, which endpoints need authentication.
+ */
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
+    /**
+     * JWT authentication filter described here: {@link zti_spring_backend.config.JWTAuthFilter}
+     */
     private final JWTAuthFilter jwtAuthFilter;
+
+    /**
+     * Authentication provider described here: {@link zti_spring_backend.config.ApplicationConfig}
+     */
     private final AuthenticationProvider authenticationProvider;
 
+    /**
+     * Method for configuring the security filter chain for http requests.
+     * It disables authentication for endpoints beginning with "/auth/**" and for all OpenApi endpoints.
+     * @param http the {@link HttpSecurity} to configure.
+     * @return the configured {@link SecurityFilterChain}.
+     * @throws Exception if an exception occurs during configuration.
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(@NonNull HttpSecurity http) throws Exception
     {

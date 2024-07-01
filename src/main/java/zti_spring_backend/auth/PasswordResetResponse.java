@@ -6,6 +6,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Response for resetting user password. Contains a generated password.
+ */
 @Data
 @Builder
 @AllArgsConstructor

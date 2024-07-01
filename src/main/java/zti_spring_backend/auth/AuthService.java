@@ -19,13 +19,32 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
+
+/**
+ * Service for user authentication
+ */
 @Service
 @RequiredArgsConstructor
 public class AuthService {
 
+    /**
+     * User Repository described here: {@link zti_spring_backend.repo.UserRepository}
+     */
     private final UserRepository userRepository;
+
+    /**
+     * Password encoder described here: {@link zti_spring_backend.config.ApplicationConfig}
+     */
     private final PasswordEncoder passwordEncoder;
+
+    /**
+     * JwtService described here: {@link zti_spring_backend.config.JwtService}
+     */
     private final JwtService jwtService;
+
+    /**
+     * AuthenticationManager described here: {@link zti_spring_backend.config.ApplicationConfig}
+     */
     private final AuthenticationManager authenticationManager;
 
     /**
